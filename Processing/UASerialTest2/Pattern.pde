@@ -33,6 +33,21 @@ class DebugPattern implements Pattern {
 
 };
 
+class AnalPattern implements Pattern {
+
+  void update() {
+
+  }
+
+  color colorAt(int x, int y) {
+
+    float t = map(analGlobal[x][y], 0, 1023, 0, 1);
+    return lerpColor(color(255, 0, 0), color(255), t);
+
+  }
+
+};
+
 class SinePattern implements Pattern {
 
   int frame = 0;
@@ -44,9 +59,8 @@ class SinePattern implements Pattern {
   color colorAt(int x, int y) {
     
     float t = map(sin(frame / 50.0 + y / 5.0), -1, 1, 0, 1);
-    return lerpColor(color(255), color(255, 0, 0), t);
+    return lerpColor(color(255, 0, 0), color(255), t);
 
   }
 
 };
-
