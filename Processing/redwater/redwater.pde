@@ -19,6 +19,7 @@ void setup() {
     buffer2 = new float[WIDTH * HEIGHT];
     stroke(200);
     strokeWeight(2);
+    frameRate(30);
 }
 
 void draw() {

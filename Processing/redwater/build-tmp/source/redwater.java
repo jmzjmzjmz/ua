@@ -1,16 +1,20 @@
 import processing.core.*; 
 import processing.data.*; 
-import processing.event.*; 
 import processing.opengl.*; 
 
-import java.util.HashMap; 
-import java.util.ArrayList; 
-import java.io.File; 
-import java.io.BufferedReader; 
-import java.io.PrintWriter; 
-import java.io.InputStream; 
-import java.io.OutputStream; 
-import java.io.IOException; 
+import java.applet.*; 
+import java.awt.Dimension; 
+import java.awt.Frame; 
+import java.awt.event.MouseEvent; 
+import java.awt.event.KeyEvent; 
+import java.awt.event.FocusEvent; 
+import java.awt.Image; 
+import java.io.*; 
+import java.net.*; 
+import java.text.*; 
+import java.util.*; 
+import java.util.zip.*; 
+import java.util.regex.*; 
 
 public class redwater extends PApplet {
 
@@ -35,6 +39,7 @@ public void setup() {
     buffer2 = new float[WIDTH * HEIGHT];
     stroke(200);
     strokeWeight(2);
+    frameRate(30);
 }
 
 public void draw() {
