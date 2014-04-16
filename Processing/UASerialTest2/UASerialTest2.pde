@@ -120,14 +120,12 @@ void serialEvent(Serial thisPort) {
 
     storeIRTable();
    
-    for (int i = 1; i < buffer.length; i++) {
+    for (int i = 0; i < buffer.length; i++) {
 
       int x = buffer.order[i][0] + buffer.x;
       int y = buffer.order[i][1] + buffer.y;
 
-      irTable[x][y] = values[i];
-      
-      println(x + " " + y);
+      irTable[x][y] = values[i+1];
   
     }
 
