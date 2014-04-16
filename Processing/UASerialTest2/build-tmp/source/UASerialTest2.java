@@ -38,14 +38,18 @@ int BLOCK_SIZE = 20;
 int WIDTH = 36;
 int HEIGHT = 8;
 
+int THRESH = 1024/2;
+
 UDP udp;
 
 AnalBuffer[] analBuffers = new AnalBuffer[8];
-int[][] analGlobal = new int[WIDTH][HEIGHT];
+
+int[][] irTable = new int[WIDTH][HEIGHT];
+int[][] irTablePrev = new int[WIDTH][HEIGHT];
 
 byte[] colorBytes;
 
-Pattern pattern = new SinePattern();
+Pattern pattern = new PuddlePattern();
 
 public void setup() {
 
@@ -58,17 +62,17 @@ public void setup() {
 
   String[] serials = Serial.list();
 
-  analBuffers[0] = new AnalBuffer(this, serials[0], 0, 0,  new int[][] { { 2, 0 }, { 2, 1 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 5, 0 }, { 5, 1 }, { 6, 0 }, { 6, 1 }, { 7, 0 }, { 7, 1 }, { 8, 0 }, { 8, 1 }, { 2, 2 }, { 2, 3 }, { 3, 2 }, { 3, 3 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 5, 3 }, { 6, 2 }, { 6, 3 }, { 7, 2 }, { 7, 3 }, { 8, 2 }, { 8, 3 } });
-  analBuffers[1] = new AnalBuffer(this, serials[0], 0, 4,  new int[][] { { 0, 0 }, { 0, 1 }, { 1, 0 }, { 1, 1 }, { 2, 0 }, { 2, 1 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 5, 0 }, { 5, 1 }, { 6, 0 }, { 6, 1 }, { 7, 0 }, { 7, 1 }, { 8, 0 }, { 8, 1 }, { 0, 2 }, { 0, 3 }, { 1, 2 }, { 1, 3 }, { 2, 2 }, { 2, 3 }, { 3, 2 }, { 3, 3 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 5, 3 }, { 6, 2 }, { 6, 3 }, { 7, 2 }, { 7, 3 }, { 8, 2 }, { 8, 3 } });
+  // analBuffers[0] = new AnalBuffer(0, this, serials[0], 0, 0,  new int[][] { { 2, 0 }, { 2, 1 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 5, 0 }, { 5, 1 }, { 6, 0 }, { 6, 1 }, { 7, 0 }, { 7, 1 }, { 8, 0 }, { 8, 1 }, { 2, 2 }, { 2, 3 }, { 3, 2 }, { 3, 3 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 5, 3 }, { 6, 2 }, { 6, 3 }, { 7, 2 }, { 7, 3 }, { 8, 2 }, { 8, 3 } });
+  // analBuffers[1] = new AnalBuffer(1, this, serials[2], 0, 4,  new int[][] { { 0, 0 }, { 0, 1 }, { 1, 0 }, { 1, 1 }, { 2, 0 }, { 2, 1 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 5, 0 }, { 5, 1 }, { 6, 0 }, { 6, 1 }, { 7, 0 }, { 7, 1 }, { 8, 0 }, { 8, 1 }, { 0, 2 }, { 0, 3 }, { 1, 2 }, { 1, 3 }, { 2, 2 }, { 2, 3 }, { 3, 2 }, { 3, 3 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 5, 3 }, { 6, 2 }, { 6, 3 }, { 7, 2 }, { 7, 3 }, { 8, 2 }, { 8, 3 } });
 
-  analBuffers[2] = new AnalBuffer(this, serials[0], 9, 0,  new int[][] { { 0, 0 }, { 0, 1 }, { 1, 0 }, { 1, 1 }, { 2, 0 }, { 2, 1 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 5, 0 }, { 5, 1 }, { 6, 0 }, { 6, 1 }, { 7, 1 }, { 8, 1 }, { 0, 2 }, { 0, 3 }, { 1, 2 }, { 1, 3 }, { 2, 2 }, { 2, 3 }, { 3, 2 }, { 3, 3 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 5, 3 }, { 6, 2 }, { 6, 3 }, { 7, 2 }, { 7, 3 }, { 8, 2 }, { 8, 3 } });
-  analBuffers[3] = new AnalBuffer(this, serials[0], 9, 4,  new int[][] { { 0, 0 }, { 0, 1 }, { 1, 0 }, { 1, 1 }, { 2, 0 }, { 2, 1 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 5, 0 }, { 5, 1 }, { 6, 0 }, { 6, 1 }, { 7, 0 }, { 7, 1 }, { 8, 0 }, { 8, 1 }, { 0, 2 }, { 0, 3 }, { 1, 2 }, { 1, 3 }, { 2, 2 }, { 2, 3 }, { 3, 2 }, { 3, 3 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 5, 3 }, { 6, 2 }, { 6, 3 }, { 7, 2 }, { 7, 3 }, { 8, 2 }, { 8, 3 } });
+  // analBuffers[2] = new AnalBuffer(2, this, serials[4], 9, 0,  new int[][] { { 0, 0 }, { 0, 1 }, { 1, 0 }, { 1, 1 }, { 2, 0 }, { 2, 1 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 5, 0 }, { 5, 1 }, { 6, 0 }, { 6, 1 }, { 7, 1 }, { 8, 1 }, { 0, 2 }, { 0, 3 }, { 1, 2 }, { 1, 3 }, { 2, 2 }, { 2, 3 }, { 3, 2 }, { 3, 3 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 5, 3 }, { 6, 2 }, { 6, 3 }, { 7, 2 }, { 7, 3 }, { 8, 2 }, { 8, 3 } });
+  // analBuffers[3] = new AnalBuffer(3, this, serials[6], 9, 4,  new int[][] { { 0, 0 }, { 0, 1 }, { 1, 0 }, { 1, 1 }, { 2, 0 }, { 2, 1 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 5, 0 }, { 5, 1 }, { 6, 0 }, { 6, 1 }, { 7, 0 }, { 7, 1 }, { 8, 0 }, { 8, 1 }, { 0, 2 }, { 0, 3 }, { 1, 2 }, { 1, 3 }, { 2, 2 }, { 2, 3 }, { 3, 2 }, { 3, 3 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 5, 3 }, { 6, 2 }, { 6, 3 }, { 7, 2 }, { 7, 3 }, { 8, 2 }, { 8, 3 } });
 
-  analBuffers[4] = new AnalBuffer(this, serials[0], 18, 0, new int[][] { { 0, 1 }, { 1, 1 }, { 2, 0 }, { 2, 1 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 5, 0 }, { 5, 1 }, { 6, 0 }, { 6, 1 }, { 7, 0 }, { 7, 1 }, { 8, 0 }, { 8, 1 }, { 0, 2 }, { 0, 3 }, { 1, 2 }, { 1, 3 }, { 2, 2 }, { 2, 3 }, { 3, 2 }, { 3, 3 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 5, 3 }, { 6, 2 }, { 6, 3 }, { 7, 2 }, { 7, 3 }, { 8, 2 }, { 8, 3 } });
-  analBuffers[5] = new AnalBuffer(this, serials[0], 18, 4, new int[][] { { 0, 0 }, { 0, 1 }, { 1, 0 }, { 2, 0 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 5, 0 }, { 5, 1 }, { 6, 0 }, { 6, 1 }, { 7, 0 }, { 7, 1 }, { 8, 0 }, { 8, 1 }, { 0, 2 }, { 0, 3 }, { 1, 3 }, { 2, 3 }, { 3, 2 }, { 3, 3 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 5, 3 }, { 6, 2 }, { 6, 3 }, { 7, 2 }, { 7, 3 }, { 8, 2 }, { 8, 3 } });
+  // analBuffers[4] = new AnalBuffer(4, this, serials[8], 18, 0, new int[][] { { 0, 1 }, { 1, 1 }, { 2, 0 }, { 2, 1 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 5, 0 }, { 5, 1 }, { 6, 0 }, { 6, 1 }, { 7, 0 }, { 7, 1 }, { 8, 0 }, { 8, 1 }, { 0, 2 }, { 0, 3 }, { 1, 2 }, { 1, 3 }, { 2, 2 }, { 2, 3 }, { 3, 2 }, { 3, 3 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 5, 3 }, { 6, 2 }, { 6, 3 }, { 7, 2 }, { 7, 3 }, { 8, 2 }, { 8, 3 } });
+  // analBuffers[5] = new AnalBuffer(5, this, serials[10], 18, 4, new int[][] { { 0, 0 }, { 0, 1 }, { 1, 0 }, { 2, 0 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 5, 0 }, { 5, 1 }, { 6, 0 }, { 6, 1 }, { 7, 0 }, { 7, 1 }, { 8, 0 }, { 8, 1 }, { 0, 2 }, { 0, 3 }, { 1, 3 }, { 2, 3 }, { 3, 2 }, { 3, 3 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 5, 3 }, { 6, 2 }, { 6, 3 }, { 7, 2 }, { 7, 3 }, { 8, 2 }, { 8, 3 } });
 
-  analBuffers[6] = new AnalBuffer(this, serials[0], 27, 0, new int[][] { { 0, 0 }, { 0, 1 }, { 1, 0 }, { 1, 1 }, { 2, 0 }, { 2, 1 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 5, 0 }, { 5, 1 }, { 6, 0 }, { 6, 1 }, { 7, 0 }, { 7, 1 }, { 8, 1 }, { 0, 2 }, { 0, 3 }, { 1, 2 }, { 1, 3 }, { 2, 2 }, { 2, 3 }, { 3, 2 }, { 3, 3 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 5, 3 }, { 6, 2 }, { 6, 3 }, { 7, 2 }, { 7, 3 }, { 8, 2 }, { 8, 3 } });
-  analBuffers[7] = new AnalBuffer(this, serials[0], 27, 4, new int[][] { { 0, 0 }, { 0, 1 }, { 1, 0 }, { 1, 1 }, { 2, 0 }, { 2, 1 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 5, 0 }, { 5, 1 }, { 6, 0 }, { 6, 1 }, { 7, 0 }, { 7, 1 }, { 8, 0 }, { 8, 1 }, { 0, 2 }, { 0, 3 }, { 1, 2 }, { 1, 3 }, { 2, 2 }, { 2, 3 }, { 3, 2 }, { 3, 3 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 5, 3 }, { 6, 2 }, { 6, 3 }, { 7, 2 }, { 7, 3 }, { 8, 2 }, { 8, 3 } });
+  // analBuffers[6] = new AnalBuffer(6, this, serials[12], 27, 0, new int[][] { { 0, 0 }, { 0, 1 }, { 1, 0 }, { 1, 1 }, { 2, 0 }, { 2, 1 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 5, 0 }, { 5, 1 }, { 6, 0 }, { 6, 1 }, { 7, 0 }, { 7, 1 }, { 8, 1 }, { 0, 2 }, { 0, 3 }, { 1, 2 }, { 1, 3 }, { 2, 2 }, { 2, 3 }, { 3, 2 }, { 3, 3 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 5, 3 }, { 6, 2 }, { 6, 3 }, { 7, 2 }, { 7, 3 }, { 8, 2 }, { 8, 3 } });
+  // analBuffers[7] = new AnalBuffer(7, this, serials[14], 27, 4, new int[][] { { 0, 0 }, { 0, 1 }, { 1, 0 }, { 1, 1 }, { 2, 0 }, { 2, 1 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 5, 0 }, { 5, 1 }, { 6, 0 }, { 6, 1 }, { 7, 0 }, { 7, 1 }, { 8, 0 }, { 8, 1 }, { 0, 2 }, { 0, 3 }, { 1, 2 }, { 1, 3 }, { 2, 2 }, { 2, 3 }, { 3, 2 }, { 3, 3 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 5, 3 }, { 6, 2 }, { 6, 3 }, { 7, 2 }, { 7, 3 }, { 8, 2 }, { 8, 3 } });
 
 }
 
@@ -79,6 +83,7 @@ public void draw() {
 
   // Draw pixels to screen
   // ... also send them over UDP.
+  pattern.update();
 
   for (int[] coord : pixelOrder) {
 
@@ -99,19 +104,25 @@ public void draw() {
 
   }
 
-  pattern.update();
   udp.send(colorBytes, UDP_IP, 9999);
+
 
 }
 
 public void keyPressed() {
 
   if (key == '1') {
-    pattern = new AnalPattern();    
+    pattern = new IRTestPattern();    
   } else if (key == '2') { 
-    pattern = new DebugPattern();
+    pattern = new OrderTestPattern();
   } else if (key == '3') {
     pattern = new SinePattern();
+  } else if (key == '4') {
+    pattern = new FadePattern();
+  } else if (key == '5') {
+    pattern = new PuddlePattern();
+  } else if (key == '6') {
+    pattern = new RainbowPuddlePattern();
   }
 
 }
@@ -122,44 +133,96 @@ public void serialEvent(Serial thisPort) {
 
   if (message == null) return;
 
+  int[] values = PApplet.parseInt(splitTokens(message));
+
   // Merge all the AnalBuffers into a global (x, y) table
   // that we can send to the patterns to do interactivity.
 
   for (AnalBuffer buffer : analBuffers) {
-    
-    if (thisPort != buffer.serial) continue;
 
-    int[] values = PApplet.parseInt(splitTokens(message));
+    if (values[0] != buffer.id || values.length != buffer.length + 1) continue;
 
-    if (values.length != buffer.length + 1) return;
+    storeIRTable();
 
-    for (int i = 0; i < buffer.length; i++) {
+    for (int i = 1; i < buffer.length; i++) {
 
       int x = buffer.order[i][0] + buffer.x;
       int y = buffer.order[i][1] + buffer.y;
 
-      analGlobal[x][y] = values[i];
+      irTable[x][y] = values[i];
 
     }
 
+
+
+  }
+
+
+
+}
+
+int previousMouseCellX = 0;
+int previousMouseCellY = 0;
+
+public void mouseMoved() {
+
+  int mouseCellX = mouseX / BLOCK_SIZE;
+  int mouseCellY = mouseY / BLOCK_SIZE;
+
+  storeIRTable();
+
+  if (previousMouseCellY != mouseCellY ||
+      previousMouseCellX != mouseCellX) {
+
+    irTable[previousMouseCellX][previousMouseCellY] = 0;
+    irTable[mouseCellX][mouseCellY] = 1023;
+
+  }
+
+  previousMouseCellX = mouseCellX;
+  previousMouseCellY = mouseCellY;
+
+}
+
+public void mousePressed() {
+
+  int val = irTable[mouseX / BLOCK_SIZE][mouseY / BLOCK_SIZE];
+
+  storeIRTable();
+
+  if (val == 1023) {
+    irTable[mouseX / BLOCK_SIZE][mouseY / BLOCK_SIZE] = 0;
+  } else { 
+    irTable[mouseX / BLOCK_SIZE][mouseY / BLOCK_SIZE] = 1023;
+  }
+
+}
+
+// make sure you always call this BEFORE you manipulate the ir table.
+// stores previous ir values.
+public void storeIRTable() {
+
+  for(int i = 0; i < irTable.length; i++) {
+    System.arraycopy(irTable[i], 0, irTablePrev[i], 0, irTable[i].length);
   }
 
 }
 class AnalBuffer {
     
   public Serial serial;
-  public int x;
-  public int y;
+  public final int x;
+  public final int y;
 
-  public int[][] order;
+  public final int[][] order;
 
-  public int length;
+  public final int length;
+  public final int id;
 
-  AnalBuffer(PApplet p, String serialID, int x, int y, int[][] order) {
+  AnalBuffer(int id, PApplet p, String serialID, int x, int y, int[][] order) {
     
     // this.serial = new Serial(p, serialID, BAUD);
     // this.serial.bufferUntil(13);
-
+    this.id = id;
     this.x = x;
     this.y = y;
     this.order = order;
@@ -167,15 +230,17 @@ class AnalBuffer {
 
   }
 
-}
-interface Pattern {
 
-  public void update();
-  public int colorAt(int x, int y);
+
+}
+class Pattern {
+
+  public void update() {}
+  public int colorAt(int x, int y) { return 0; }
 
 };
 
-class DebugPattern implements Pattern {
+class OrderTestPattern extends Pattern {
 
   int frame = 0;
   int frame2 = 0;
@@ -203,22 +268,47 @@ class DebugPattern implements Pattern {
 
 };
 
-class AnalPattern implements Pattern {
-
-  public void update() {
-
-  }
+class IRTestPattern extends Pattern {
 
   public int colorAt(int x, int y) {
 
-    float t = map(analGlobal[x][y], 0, 1023, 0, 1);
+    float t = map(irTable[x][y], 0, 1023, 0, 1);
     return lerpColor(color(255, 0, 0), color(255), t);
 
   }
 
 };
 
-class SinePattern implements Pattern {
+class FadePattern extends Pattern {
+
+  float[][] fadeTable = new float[WIDTH][HEIGHT];
+
+  public void update() {
+
+    for (int x = 0; x < fadeTable.length; x++) {
+      for (int y = 0; y < fadeTable[0].length; y++) {
+
+        fadeTable[x][y] *= 0.97f;
+
+        if (irTable[x][y] > THRESH) {
+          fadeTable[x][y] = 1;
+        }
+
+      }
+    }
+
+  }
+
+
+  public int colorAt(int x, int y) {
+    
+    return lerpColor(color(255, 0, 0), color(255), fadeTable[x][y]);
+
+  }
+
+};
+
+class SinePattern extends Pattern {
 
   int frame = 0;
 
@@ -230,6 +320,122 @@ class SinePattern implements Pattern {
     
     float t = map(sin(frame / 50.0f + y / 5.0f), -1, 1, 0, 1);
     return lerpColor(color(255, 0, 0), color(255), t);
+
+  }
+
+};
+
+class PuddlePattern extends Pattern {
+
+  float DAMPING = 0.96f;
+  int SLOW = 2;
+
+  float WAVE_CONST = 2.2f;
+
+  float[] buffer1 = new float[WIDTH * HEIGHT];
+  float[] buffer2 = new float[WIDTH * HEIGHT];
+  float[] temp;
+
+  int frame = 0;
+
+  public void update() {
+
+    frame++;
+
+    int x, y;
+
+    float x1, x2, y1, y2;
+    int l = WIDTH * HEIGHT;
+
+    for (int i = 0; i < l; i++) {
+
+      if (irTable[i%WIDTH][i/WIDTH] > THRESH) {
+        if (irTablePrev[i%WIDTH][i/WIDTH] <= THRESH) {
+          buffer1[ i ] = 10;
+        } else { 
+          buffer1[ i ] = 5;
+        }
+      }
+    }
+
+    if (frame % SLOW != 0) return;
+
+    for (int i = 0; i < l; i++) {
+
+      x = i % WIDTH;
+      y = i / WIDTH;
+
+      if ( x == 0 ) {
+
+        // left edge
+        x1 = 0;        
+        x2 = buffer1[ i + 1 ];
+
+      } else if ( x == WIDTH - 1 ) {
+
+        // right edge
+        x1 = buffer1[ i - 1 ];
+        x2 = 0;
+
+      } else {
+
+        x1 = buffer1[ i - 1 ];
+        x2 = buffer1[ i + 1 ];
+
+      }
+
+      if ( i < WIDTH ) {
+
+        // top edge
+        y1 = 0;
+        y2 = buffer1[ i + WIDTH ];
+
+      } else if ( i > l - WIDTH - 1 ) {
+
+        // bottom edge
+        y1 = buffer1[ i - WIDTH ];
+        y2 = 0;
+
+      } else {
+
+        y1 = buffer1[ i - WIDTH ];
+        y2 = buffer1[ i + WIDTH ];
+
+      }
+
+      buffer2[ i ] = ( x1 + x2 + y1 + y2 ) / WAVE_CONST - buffer2[ i ];
+      buffer1[ i ] += ( buffer2[ i ] - buffer1[ i ] ) * 0.25f;
+
+    }
+
+    temp = buffer1;
+    buffer1 = buffer2;
+    buffer2 = temp;
+
+  }
+
+  public int colorAt(int x, int y) {
+
+    float p = buffer2[ y*WIDTH + x ];
+    return color(255, p*255, p*255);
+
+  }
+
+};
+
+class RainbowPuddlePattern extends PuddlePattern {
+
+  float WAVE_CONST = 2;
+  int SLOW = 1;
+
+  public int colorAt(int x, int y) {
+
+    colorMode(HSB, 1, 1, 1);
+    float p = buffer2[ y*WIDTH + x ];
+    while (p < 0) p += 1;
+    int c = color(p%1, 1, 1);
+    colorMode(RGB, 255, 255, 255);
+    return c;
 
   }
 
