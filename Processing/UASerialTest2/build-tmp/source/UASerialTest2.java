@@ -39,6 +39,8 @@ int WIDTH = 10;
 int HEIGHT = 8;
 
 int THRESH = 1024/2;
+int IR_MAX = 1023;
+boolean IR_INVERTED = true;
 
 UDP udp;
 
@@ -143,16 +145,20 @@ public void serialEvent(Serial thisPort) {
 
     storeIRTable();
    
-    for (int i = 1; i < buffer.length; i++) {
+    for (int i = 0; i < buffer.length; i++) {
 
       int x = buffer.order[i][0] + buffer.x;
       int y = buffer.order[i][1] + buffer.y;
 
-      irTable[x][y] = values[i];
-
+      irTable[x][y] = IR_INVERTED ? values[i+1] : IR_MAX - values[i+1];
+  
     }
 
   }
+  
+  println();
+  println();
+  println();
 
 }
 
