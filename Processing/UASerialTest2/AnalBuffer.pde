@@ -11,14 +11,14 @@ class AnalBuffer {
 
   AnalBuffer(int id, PApplet p, String serialID, int x, int y, int[][] order) {
     
-    // this.serial = new Serial(p, serialID, BAUD);
-    // this.serial.bufferUntil(13);
+    this.serial = new Serial(p, serialID, BAUD);
+    this.serial.bufferUntil(13);
     this.id = id;
     this.x = x;
     this.y = y;
     this.order = order;
     this.length = this.order.length;
-
+    println(this.length);
   }
 
 
