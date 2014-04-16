@@ -126,10 +126,16 @@ void serialEvent(Serial thisPort) {
       int y = buffer.order[i][1] + buffer.y;
 
       irTable[x][y] = values[i];
-
+      
+      println(x + " " + y);
+  
     }
 
   }
+  
+  println();
+  println();
+  println();
 
 }
 
