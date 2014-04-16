@@ -90,6 +90,8 @@ class SinePattern extends Pattern {
 
 };
 
+
+
 class PuddlePattern extends Pattern {
 
   float DAMPING = 0.96;

@@ -40,7 +40,7 @@ void setup() {
   String[] serials = Serial.list();
   println(serials);
   
-  analBuffers[0] = new AnalBuffer(0, this, serials[5], 0, 0,  new int[][] { { 2, 0 }, { 2, 1 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 5, 0 }, { 5, 1 }, { 6, 0 }, { 6, 1 }, { 7, 0 }, { 7, 1 }, { 8, 0 }, { 8, 1 }, { 2, 2 }, { 2, 3 }, { 3, 2 }, { 3, 3 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 5, 3 }, { 6, 2 }, { 6, 3 }, { 7, 2 }, { 7, 3 }, { 8, 2 }, { 8, 3 } });
+  analBuffers[0] = new AnalBuffer(0, this, serials[5], 0, 0, new int[][] { { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 }, { 2, 1 }, { 3, 1 }, { 4, 1 }, { 5, 1 }, { 6, 1 }, { 7, 1 }, { 8, 1 }, { 2, 2 }, { 3, 2 }, { 4, 2 }, { 5, 2 }, { 6, 2 }, { 7, 2 }, { 8, 2 }, { 2, 3 }, { 3, 3 }, { 4, 3 }, { 5, 3 }, { 6, 3 }, { 7, 3 }, { 8, 3 } });
   // analBuffers[1] = new AnalBuffer(1, this, serials[2], 0, 4,  new int[][] { { 0, 0 }, { 0, 1 }, { 1, 0 }, { 1, 1 }, { 2, 0 }, { 2, 1 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 5, 0 }, { 5, 1 }, { 6, 0 }, { 6, 1 }, { 7, 0 }, { 7, 1 }, { 8, 0 }, { 8, 1 }, { 0, 2 }, { 0, 3 }, { 1, 2 }, { 1, 3 }, { 2, 2 }, { 2, 3 }, { 3, 2 }, { 3, 3 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 5, 3 }, { 6, 2 }, { 6, 3 }, { 7, 2 }, { 7, 3 }, { 8, 2 }, { 8, 3 } });
 
   // analBuffers[2] = new AnalBuffer(2, this, serials[4], 9, 0,  new int[][] { { 0, 0 }, { 0, 1 }, { 1, 0 }, { 1, 1 }, { 2, 0 }, { 2, 1 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 5, 0 }, { 5, 1 }, { 6, 0 }, { 6, 1 }, { 7, 1 }, { 8, 1 }, { 0, 2 }, { 0, 3 }, { 1, 2 }, { 1, 3 }, { 2, 2 }, { 2, 3 }, { 3, 2 }, { 3, 3 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 5, 3 }, { 6, 2 }, { 6, 3 }, { 7, 2 }, { 7, 3 }, { 8, 2 }, { 8, 3 } });
@@ -52,8 +52,6 @@ void setup() {
   // analBuffers[6] = new AnalBuffer(6, this, serials[12], 27, 0, new int[][] { { 0, 0 }, { 0, 1 }, { 1, 0 }, { 1, 1 }, { 2, 0 }, { 2, 1 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 5, 0 }, { 5, 1 }, { 6, 0 }, { 6, 1 }, { 7, 0 }, { 7, 1 }, { 8, 1 }, { 0, 2 }, { 0, 3 }, { 1, 2 }, { 1, 3 }, { 2, 2 }, { 2, 3 }, { 3, 2 }, { 3, 3 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 5, 3 }, { 6, 2 }, { 6, 3 }, { 7, 2 }, { 7, 3 }, { 8, 2 }, { 8, 3 } });
   // analBuffers[7] = new AnalBuffer(7, this, serials[14], 27, 4, new int[][] { { 0, 0 }, { 0, 1 }, { 1, 0 }, { 1, 1 }, { 2, 0 }, { 2, 1 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 5, 0 }, { 5, 1 }, { 6, 0 }, { 6, 1 }, { 7, 0 }, { 7, 1 }, { 8, 0 }, { 8, 1 }, { 0, 2 }, { 0, 3 }, { 1, 2 }, { 1, 3 }, { 2, 2 }, { 2, 3 }, { 3, 2 }, { 3, 3 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 5, 3 }, { 6, 2 }, { 6, 3 }, { 7, 2 }, { 7, 3 }, { 8, 2 }, { 8, 3 } });
 
-//  frameRate(500);
-
 }
 
 void draw() {
@@ -61,8 +59,6 @@ void draw() {
   color c;
   int i = 0, x, y;
 
-  // Draw pixels to screen
-  // ... also send them over UDP.
   pattern.update();
 
   for (int[] coord : pixelOrder) {
@@ -72,7 +68,6 @@ void draw() {
 
     c = pattern.colorAt(x, y);
 
-    // assign rgb to color byte array
     colorBytes[i * 3 + 0] = byte((c >> 16) & 0xFF); 
     colorBytes[i * 3 + 1] = byte((c >> 8) & 0xFF);
     colorBytes[i * 3 + 2] = byte(c & 0xFF);
@@ -86,8 +81,6 @@ void draw() {
 
   udp.send(colorBytes, UDP_IP, 9999);
   
-
-
 }
 
 void keyPressed() {
@@ -111,44 +104,32 @@ void keyPressed() {
 void serialEvent(Serial thisPort) {
 
   String message = thisPort.readStringUntil(13);
-  
-//  println(message);
 
   if (message == null) return;
-
-//  println(splitTokens(message)[0]);
-//  println(int(splitTokens(message)));
   
   int[] values = int(splitTokens(message));
-//  println(values.length);
   
   if (values.length == 0) return;
-//
-//  // Merge all the AnalBuffers into a global (x, y) table
-//  // that we can send to the patterns to do interactivity.
-//
+
+  // Merge all the AnalBuffers into a global (x, y) table
+  // that we can send to the patterns to do interactivity.
+
   for (AnalBuffer buffer : analBuffers) {
-//
+
     if (buffer == null || values[0] != buffer.id || values.length != buffer.length + 1) continue;
-//
+
     storeIRTable();
-////    
-//    println(values);
-//
+   
     for (int i = 1; i < buffer.length; i++) {
-//
+
       int x = buffer.order[i][0] + buffer.x;
       int y = buffer.order[i][1] + buffer.y;
-//
+
       irTable[x][y] = values[i];
-//
+
     }
-//
-//
-//
+
   }
-//
-//
 
 }
 
