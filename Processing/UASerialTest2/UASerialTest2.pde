@@ -1,6 +1,7 @@
 import processing.serial.*;
 import hypermedia.net.*;
 import com.onformative.yahooweather.*;
+import controlP5.*;
 
 boolean USE_SCHEDULER = false;
 boolean USE_WEATHER = false;
@@ -26,10 +27,12 @@ int BLOCK_SIZE = 20;
 int WIDTH = 36;
 int HEIGHT = 8;
 
-int THRESH = 100;
+int THRESH = 225;
 int IR_MAX = 1023;
 
 UDP udp;
+
+ControlP5 controlP5;
 
 AnalBuffer[] analBuffers = new AnalBuffer[8];
 
@@ -38,16 +41,18 @@ int[][] irTablePrev = new int[WIDTH][HEIGHT];
 
 byte[] colorBytes;
 
-Pattern pattern;
+Pattern pattern = new SolidPattern();
 
 YahooWeather weather;
 
 InputFaker inputFaker = new InputFaker();
-Scheduler scheduler = new Scheduler();
+Scheduler scheduler;
 
 void setup() {
 
-  size(WIDTH * BLOCK_SIZE, HEIGHT * BLOCK_SIZE);
+  background(20);
+
+  size(WIDTH * BLOCK_SIZE, HEIGHT * BLOCK_SIZE + 100);
 
   // Start out with IR_MAX everywhere.
   for (int x = 0; x < irTable.length; x++) {
@@ -65,19 +70,26 @@ void setup() {
   String[] serials = Serial.list();
   println(serials);
 
+  controlP5 = new ControlP5(this);
+  controlP5.addSlider("THRESH")
+    .setPosition(0, HEIGHT * BLOCK_SIZE)
+    .setRange(0, IR_MAX)
+    .setSize(220, 20);
+
+  if (USE_SCHEDULER) scheduler = new Scheduler();
   if (USE_WEATHER) weather = new YahooWeather(this, 12761344, "c", 86400000); //86400000 millis in a day
 
-//  analBuffers[0] = new AnalBuffer(0, this, serials[4], 0, 0, new int[][] { { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 }, { 2, 1 }, { 3, 1 }, { 4, 1 }, { 5, 1 }, { 6, 1 }, { 7, 1 }, { 8, 1 }, { 2, 2 }, { 3, 2 }, { 4, 2 }, { 5, 2 }, { 6, 2 }, { 7, 2 }, { 8, 2 }, { 2, 3 }, { 3, 3 }, { 4, 3 }, { 5, 3 }, { 6, 3 }, { 7, 3 }, { 8, 3 } } );
-//  analBuffers[1] = new AnalBuffer(1, this, serials[6], 0, 4, new int[][] { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 }, { 0, 1 }, { 1, 1 }, { 2, 1 }, { 3, 1 }, { 4, 1 }, { 5, 1 }, { 6, 1 }, { 7, 1 }, { 8, 1 }, { 0, 2 }, { 1, 2 }, { 2, 2 }, { 3, 2 }, { 4, 2 }, { 5, 2 }, { 6, 2 }, { 7, 2 }, { 8, 2 }, { 0, 3 }, { 1, 3 }, { 2, 3 }, { 3, 3 }, { 4, 3 }, { 5, 3 }, { 6, 3 }, { 7, 3 }, { 8, 3 } } );
-//
-//  analBuffers[2] = new AnalBuffer(2, this, serials[8], 9, 0, new int[][] { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 0, 1 }, { 1, 1 }, { 2, 1 }, { 3, 1 }, { 4, 1 }, { 5, 1 }, { 6, 1 }, { 7, 1 }, { 8, 1 }, { 0, 2 }, { 1, 2 }, { 2, 2 }, { 3, 2 }, { 4, 2 }, { 5, 2 }, { 6, 2 }, { 7, 2 }, { 8, 2 }, { 0, 3 }, { 1, 3 }, { 2, 3 }, { 3, 3 }, { 4, 3 }, { 5, 3 }, { 6, 3 }, { 7, 3 }, { 8, 3 } } );
-//  analBuffers[3] = new AnalBuffer(3, this, serials[10], 9, 4, new int[][] { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 }, { 0, 1 }, { 1, 1 }, { 2, 1 }, { 3, 1 }, { 4, 1 }, { 5, 1 }, { 6, 1 }, { 7, 1 }, { 8, 1 }, { 0, 2 }, { 1, 2 }, { 2, 2 }, { 3, 2 }, { 4, 2 }, { 5, 2 }, { 6, 2 }, { 7, 2 }, { 8, 2 }, { 0, 3 }, { 1, 3 }, { 2, 3 }, { 3, 3 }, { 4, 3 }, { 5, 3 }, { 6, 3 }, { 7, 3 }, { 8, 3 } } );
-//
-//  analBuffers[4] = new AnalBuffer(4, this, serials[12], 18, 0, new int[][] { { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 }, { 0, 1 }, { 1, 1 }, { 2, 1 }, { 3, 1 }, { 4, 1 }, { 5, 1 }, { 6, 1 }, { 7, 1 }, { 8, 1 }, { 0, 2 }, { 1, 2 }, { 2, 2 }, { 3, 2 }, { 4, 2 }, { 5, 2 }, { 6, 2 }, { 7, 2 }, { 8, 2 }, { 0, 3 }, { 1, 3 }, { 2, 3 }, { 3, 3 }, { 4, 3 }, { 5, 3 }, { 6, 3 }, { 7, 3 }, { 8, 3 } } );
-//  analBuffers[5] = new AnalBuffer(5, this, serials[14], 18, 4, new int[][] { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 }, { 0, 1 }, { 3, 1 }, { 4, 1 }, { 5, 1 }, { 6, 1 }, { 7, 1 }, { 8, 1 }, { 0, 2 }, { 3, 2 }, { 4, 2 }, { 5, 2 }, { 6, 2 }, { 7, 2 }, { 8, 2 }, { 0, 3 }, { 1, 3 }, { 2, 3 }, { 3, 3 }, { 4, 3 }, { 5, 3 }, { 6, 3 }, { 7, 3 }, { 8, 3 } } );
-//
-//  analBuffers[6] = new AnalBuffer(6, this, serials[16], 27, 0, new int[][] { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 0, 1 }, { 1, 1 }, { 2, 1 }, { 3, 1 }, { 4, 1 }, { 5, 1 }, { 6, 1 }, { 7, 1 }, { 8, 1 }, { 0, 2 }, { 1, 2 }, { 2, 2 }, { 3, 2 }, { 4, 2 }, { 5, 2 }, { 6, 2 }, { 7, 2 }, { 8, 2 }, { 0, 3 }, { 1, 3 }, { 2, 3 }, { 3, 3 }, { 4, 3 }, { 5, 3 }, { 6, 3 }, { 7, 3 }, { 8, 3 } } );
-//  analBuffers[7] = new AnalBuffer(7, this, serials[18], 27, 4, new int[][] { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 }, { 0, 1 }, { 1, 1 }, { 2, 1 }, { 3, 1 }, { 4, 1 }, { 5, 1 }, { 6, 1 }, { 7, 1 }, { 8, 1 }, { 0, 2 }, { 1, 2 }, { 2, 2 }, { 3, 2 }, { 4, 2 }, { 5, 2 }, { 6, 2 }, { 7, 2 }, { 8, 2 }, { 0, 3 }, { 1, 3 }, { 2, 3 }, { 3, 3 }, { 4, 3 }, { 5, 3 }, { 6, 3 }, { 7, 3 }, { 8, 3 } } );
+  analBuffers[0] = new AnalBuffer(0, this, serials[4], 0, 0, new int[][] { { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 }, { 2, 1 }, { 3, 1 }, { 4, 1 }, { 5, 1 }, { 6, 1 }, { 7, 1 }, { 8, 1 }, { 2, 2 }, { 3, 2 }, { 4, 2 }, { 5, 2 }, { 6, 2 }, { 7, 2 }, { 8, 2 }, { 2, 3 }, { 3, 3 }, { 4, 3 }, { 5, 3 }, { 6, 3 }, { 7, 3 }, { 8, 3 } } );
+  analBuffers[1] = new AnalBuffer(1, this, serials[6], 0, 4, new int[][] { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 }, { 0, 1 }, { 1, 1 }, { 2, 1 }, { 3, 1 }, { 4, 1 }, { 5, 1 }, { 6, 1 }, { 7, 1 }, { 8, 1 }, { 0, 2 }, { 1, 2 }, { 2, 2 }, { 3, 2 }, { 4, 2 }, { 5, 2 }, { 6, 2 }, { 7, 2 }, { 8, 2 }, { 0, 3 }, { 1, 3 }, { 2, 3 }, { 3, 3 }, { 4, 3 }, { 5, 3 }, { 6, 3 }, { 7, 3 }, { 8, 3 } } );
+
+  analBuffers[2] = new AnalBuffer(2, this, serials[8], 9, 0, new int[][] { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 0, 1 }, { 1, 1 }, { 2, 1 }, { 3, 1 }, { 4, 1 }, { 5, 1 }, { 6, 1 }, { 7, 1 }, { 8, 1 }, { 0, 2 }, { 1, 2 }, { 2, 2 }, { 3, 2 }, { 4, 2 }, { 5, 2 }, { 6, 2 }, { 7, 2 }, { 8, 2 }, { 0, 3 }, { 1, 3 }, { 2, 3 }, { 3, 3 }, { 4, 3 }, { 5, 3 }, { 6, 3 }, { 7, 3 }, { 8, 3 } } );
+  analBuffers[3] = new AnalBuffer(3, this, serials[10], 9, 4, new int[][] { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 }, { 0, 1 }, { 1, 1 }, { 2, 1 }, { 3, 1 }, { 4, 1 }, { 5, 1 }, { 6, 1 }, { 7, 1 }, { 8, 1 }, { 0, 2 }, { 1, 2 }, { 2, 2 }, { 3, 2 }, { 4, 2 }, { 5, 2 }, { 6, 2 }, { 7, 2 }, { 8, 2 }, { 0, 3 }, { 1, 3 }, { 2, 3 }, { 3, 3 }, { 4, 3 }, { 5, 3 }, { 6, 3 }, { 7, 3 }, { 8, 3 } } );
+
+  analBuffers[4] = new AnalBuffer(4, this, serials[12], 18, 0, new int[][] { { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 }, { 0, 1 }, { 1, 1 }, { 2, 1 }, { 3, 1 }, { 4, 1 }, { 5, 1 }, { 6, 1 }, { 7, 1 }, { 8, 1 }, { 0, 2 }, { 1, 2 }, { 2, 2 }, { 3, 2 }, { 4, 2 }, { 5, 2 }, { 6, 2 }, { 7, 2 }, { 8, 2 }, { 0, 3 }, { 1, 3 }, { 2, 3 }, { 3, 3 }, { 4, 3 }, { 5, 3 }, { 6, 3 }, { 7, 3 }, { 8, 3 } } );
+  analBuffers[5] = new AnalBuffer(5, this, serials[14], 18, 4, new int[][] { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 }, { 0, 1 }, { 3, 1 }, { 4, 1 }, { 5, 1 }, { 6, 1 }, { 7, 1 }, { 8, 1 }, { 0, 2 }, { 3, 2 }, { 4, 2 }, { 5, 2 }, { 6, 2 }, { 7, 2 }, { 8, 2 }, { 0, 3 }, { 1, 3 }, { 2, 3 }, { 3, 3 }, { 4, 3 }, { 5, 3 }, { 6, 3 }, { 7, 3 }, { 8, 3 } } );
+
+  analBuffers[6] = new AnalBuffer(6, this, serials[16], 27, 0, new int[][] { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 0, 1 }, { 1, 1 }, { 2, 1 }, { 3, 1 }, { 4, 1 }, { 5, 1 }, { 6, 1 }, { 7, 1 }, { 8, 1 }, { 0, 2 }, { 1, 2 }, { 2, 2 }, { 3, 2 }, { 4, 2 }, { 5, 2 }, { 6, 2 }, { 7, 2 }, { 8, 2 }, { 0, 3 }, { 1, 3 }, { 2, 3 }, { 3, 3 }, { 4, 3 }, { 5, 3 }, { 6, 3 }, { 7, 3 }, { 8, 3 } } );
+  analBuffers[7] = new AnalBuffer(7, this, serials[18], 27, 4, new int[][] { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 }, { 0, 1 }, { 1, 1 }, { 2, 1 }, { 3, 1 }, { 4, 1 }, { 5, 1 }, { 6, 1 }, { 7, 1 }, { 8, 1 }, { 0, 2 }, { 1, 2 }, { 2, 2 }, { 3, 2 }, { 4, 2 }, { 5, 2 }, { 6, 2 }, { 7, 2 }, { 8, 2 }, { 0, 3 }, { 1, 3 }, { 2, 3 }, { 3, 3 }, { 4, 3 }, { 5, 3 }, { 6, 3 }, { 7, 3 }, { 8, 3 } } );
 
   frameRate(25);
 
@@ -117,22 +129,30 @@ void draw() {
 void keyPressed() {
 
   if (key == '1') {
-    pattern = new IRTestPattern();    
-  } else if (key == '2') { 
-    pattern = new OrderTestPattern();
-  } else if (key == '3') {
+    pattern = new SolidPattern();
+  } else if (key == '2') {
     pattern = new SinePattern();
-  } else if (key == '4') {
+  } 
+
+  else if (key == '3') {
     pattern = new FadePattern();
-  } else if (key == '5') {
+  } else if (key == '4') {
     pattern = new PuddlePattern();
-  } else if (key == '6') {
+  } else if (key == '5') {
     pattern = new PinPointPattern();
-  } else if (key == '7') {
-    pattern = new CrawlPattern();
-  } else if (key == 'z') {
-    pattern = new RainbowPuddlePattern();
   }
+
+  else if (key == 'q') {
+    pattern = new IRTestPattern();    
+  } else if (key == 'w') { 
+    pattern = new OrderTestPattern();
+  } else if (key == 'e') {
+    pattern = new CrawlPattern();
+  }
+
+  //  else if (key == 'z') {
+  //   pattern = new RainbowPuddlePattern();
+  // }
 
 }
 
@@ -145,7 +165,7 @@ void serialEvent(Serial thisPort) {
   if (message == null) return;
 
   int[] values = int(splitTokens(message));
-  
+
   if (DEBUG_SERIAL) {
     for (int i = 0; i < values.length; i++) {
       print(values[i]);
@@ -185,6 +205,8 @@ void mouseMoved() {
 
   int mouseCellX = mouseX / BLOCK_SIZE;
   int mouseCellY = mouseY / BLOCK_SIZE;
+
+  if (mouseCellY >= HEIGHT) return;
 
   storeIRTable();
 

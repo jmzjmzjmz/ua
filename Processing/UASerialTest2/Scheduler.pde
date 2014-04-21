@@ -22,6 +22,7 @@ class Scheduler {
 
     Pattern[] dayPatterns = new Pattern[] {
 
+        
         new PinPointPattern(),
         new FadePattern(),
         new PuddlePattern()
@@ -73,7 +74,7 @@ class Scheduler {
 
             int[] sunset = int(splitTokens(weather.getSunset(),": "));
             NIGHT_STARTS = (12+ sunset[0]) * 60 + sunset[1];
-            
+
         }
 
         int m = minuteOfDay();

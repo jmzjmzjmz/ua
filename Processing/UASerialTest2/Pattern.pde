@@ -5,6 +5,14 @@ class Pattern {
 
 };
 
+class SolidPattern extends Pattern {
+
+  color colorAt(int x, int y) {
+    return color(255, 0, 0);
+  }
+
+};
+
 class OrderTestPattern extends Pattern {
 
   int frame = 0;
@@ -78,7 +86,7 @@ class SinePattern extends Pattern {
 
   color colorAt(int x, int y) {
     
-    float t = map(sin(frame / 50.0 + y / 5.0), -1, 1, 0, 1);
+    float t = map(sin(frame / 15.0 + y / 8.0), -1, 1, 0, 1);
     return lerpColor(color(255, 0, 0), color(255), t);
 
   }
@@ -89,7 +97,7 @@ class SinePattern extends Pattern {
 class PuddlePattern extends Pattern {
 
   float DAMPING = 0.96;
-  int SLOW = 1;
+  int SLOW = 2;
 
   float WAVE_CONST = 2.2;
 
