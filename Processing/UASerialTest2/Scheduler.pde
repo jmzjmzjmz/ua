@@ -3,6 +3,7 @@
 // list of patterns in order
 // pattern index
 
+
 class Scheduler {
 
     // Patterns are scheduled to run for a random amount
@@ -42,8 +43,9 @@ class Scheduler {
 
     Pattern[] currentPatternList;
 
-    Scheduler() {
 
+    Scheduler() {
+          
         int m = minuteOfDay();
         lastMinute = m;
 
@@ -59,6 +61,14 @@ class Scheduler {
     }
 
     void update() {
+
+        weather.update();
+
+        int[] sunrise = int(splitTokens(weather.getSunrise(),": "));
+        NIGHT_ENDS = sunrise[0] * 60 + sunrise[1];
+
+        int[] sunset = int(splitTokens(weather.getSunset(),": "));
+        NIGHT_STARTS = (12+ sunset[0]) * 60 + sunset[1];
 
         int m = minuteOfDay();
 
@@ -105,6 +115,9 @@ class Scheduler {
 
         println("Setting pattern to " + pattern);
         println("Next pattern in " + currentPatternDuration);
+
+        println("Night starts @ " + NIGHT_STARTS);
+        println("Night ends @ " + NIGHT_ENDS);
 
     }
 

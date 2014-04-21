@@ -33,7 +33,7 @@ class IRTestPattern extends Pattern {
   color colorAt(int x, int y) {
 
     float t = map(irTable[x][y], 0, 1023, 0, 1);
-    return lerpColor(color(255, 0, 0), color(255), t);
+    return lerpColor(color(255), color(255, 0, 0), t);
 
   }
 
@@ -89,7 +89,20 @@ class SinePattern extends Pattern {
 
 };
 
+class PinPointPattern extends Pattern {
 
+  ArrayList crawlers = new ArrayList();
+
+  void update() {
+
+
+  }
+
+  void colorAt(int x, int y) {
+
+  }
+
+};
 
 class PuddlePattern extends Pattern {
 
