@@ -50,12 +50,12 @@ class FadePattern extends Pattern {
       for (int y = 0; y < fadeTable[0].length; y++) {
 
         // if (BASEMENT) {
-          fadeTable[x][y] += (0 - fadeTable[x][y]) * DECAY;
+        fadeTable[x][y] += (0 - fadeTable[x][y]) * DECAY;
         // } else { 
           // fadeTable[x][y] += (1 - fadeTable[x][y]) * DECAY;
         // }
 
-        if (irTable[x][y] > THRESH) {
+        if (irTable[x][y] < THRESH) {
           fadeTable[x][y] = 1;
         }
 
@@ -115,8 +115,8 @@ class PuddlePattern extends Pattern {
 
     for (int i = 0; i < l; i++) {
 
-      if (irTable[i%WIDTH][i/WIDTH] > THRESH) {
-        if (irTablePrev[i%WIDTH][i/WIDTH] <= THRESH) {
+      if (irTable[i%WIDTH][i/WIDTH] < THRESH) {
+        if (irTablePrev[i%WIDTH][i/WIDTH] >= THRESH) {
           buffer1[ i ] = 10;
         } else { 
           buffer1[ i ] = 5;

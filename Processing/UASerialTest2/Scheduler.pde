@@ -109,8 +109,10 @@ class Scheduler {
     }
 
     int minuteOfDay() {
-        // return hour() * 60 + minute();
-        return hour() * 3600 + minute() * 60 + second();
+        return hour() * 60 + minute();
+        
+        // use this line if you want to simulate time moving faster
+        // return hour() * 3600 + minute() * 60 + second();
     }
 
 }

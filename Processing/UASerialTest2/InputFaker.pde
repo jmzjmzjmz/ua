@@ -22,12 +22,12 @@ class InputFaker {
 
         // Set all the values in the IR table to MAX.
         // (pretend the sun is hitting everything)
-        // for (int x = 0; x < irTable.length; x++) {
-        //     for (int y = 0; y < irTable[0].length; y++) {
-        //         irTable[x][y] = IR_MAX;
-        //         irTablePrev[x][y] = IR_MAX;
-        //     }
-        // }
+        for (int x = 0; x < irTable.length; x++) {
+            for (int y = 0; y < irTable[0].length; y++) {
+                irTable[x][y] = IR_MAX;
+                irTablePrev[x][y] = IR_MAX;
+            }
+        }
 
     }
 

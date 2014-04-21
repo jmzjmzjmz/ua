@@ -22,7 +22,6 @@ int IR_MAX = 1023;
 
 boolean DEBUG_SERIAL = false;
 boolean IR_DISABLED = false;
-boolean BASEMENT = true;
 
 UDP udp;
 
@@ -41,6 +40,14 @@ Scheduler scheduler = new Scheduler();
 void setup() {
 
   size(WIDTH * BLOCK_SIZE, HEIGHT * BLOCK_SIZE);
+
+  // Start out with IR_MAX everywhere.
+  for (int x = 0; x < irTable.length; x++) {
+      for (int y = 0; y < irTable[0].length; y++) {
+          irTable[x][y] = IR_MAX;
+          irTablePrev[x][y] = IR_MAX;
+      }
+  }
 
   udp = new UDP(this);
   udp.setBuffer(1024);
@@ -71,8 +78,8 @@ void draw() {
   color c;
   int i = 0, x, y;
 
-  // scheduler.update();
-  // inputFaker.update();
+  scheduler.update();
+  inputFaker.update();
   pattern.update();
 
   for (int[] coord : pixelOrder) {
@@ -149,7 +156,7 @@ void serialEvent(Serial thisPort) {
       int x = buffer.order[i][0] + buffer.x;
       int y = buffer.order[i][1] + buffer.y;
 
-      irTable[x][y] = BASEMENT ? values[i+1] : IR_MAX - values[i+1]; 
+      irTable[x][y] = values[i+1]; 
 
     }
 
@@ -170,8 +177,8 @@ void mouseMoved() {
   if (previousMouseCellY != mouseCellY ||
       previousMouseCellX != mouseCellX) {
 
-    irTable[previousMouseCellX][previousMouseCellY] = BASEMENT ? 0 : IR_MAX;
-    irTable[mouseCellX][mouseCellY] = BASEMENT ? IR_MAX : 0;
+    irTable[previousMouseCellX][previousMouseCellY] = IR_MAX;
+    irTable[mouseCellX][mouseCellY] = 0;
 
   }
 
