@@ -11,6 +11,13 @@ class Scheduler {
     int MINIMUM_PATTERN_DURATION = 30;
     int MAXIMUM_PATTERN_DURATION = 60;
 
+    // "Minute of day" at which scheduler switches over to 
+    // "night mode". Since IR won't be reliable at night,
+    // we provide fake input data to the patterns.
+
+    int NIGHT_STARTS = 19 * 60; // 7PM
+    int NIGHT_ENDS = 6 * 60; // 6AM
+
     Pattern[] dayPatterns = new Pattern[] {
 
         new FadePattern(),
@@ -42,7 +49,9 @@ class Scheduler {
 
     void update() {
 
-
+        if (minuteOfDay() - currentPatternStarted >= currentPatternDuration) {
+            nextPattern();
+        }
 
     }
 
@@ -62,7 +71,8 @@ class Scheduler {
     }
 
     int minuteOfDay() {
-        return hour() * 60 + minute();
+        // return hour() * 60 + minute();
+        return 
     }
 
 }
