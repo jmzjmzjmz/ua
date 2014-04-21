@@ -33,6 +33,8 @@ byte[] colorBytes;
 
 Pattern pattern = new FadePattern();
 
+Scheduler scheduler = new Scheduler();
+
 void setup() {
 
   size(WIDTH * BLOCK_SIZE, HEIGHT * BLOCK_SIZE);
@@ -66,6 +68,7 @@ void draw() {
   color c;
   int i = 0, x, y;
 
+  scheduler.update();
   pattern.update();
 
   for (int[] coord : pixelOrder) {

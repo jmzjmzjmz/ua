@@ -64,7 +64,6 @@ class FadePattern extends Pattern {
 
   }
 
-
   color colorAt(int x, int y) {
     
     return lerpColor(color(255, 0, 0), color(255), fadeTable[x][y]);

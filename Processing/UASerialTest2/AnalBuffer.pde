@@ -18,9 +18,6 @@ class AnalBuffer {
     this.y = y;
     this.order = order;
     this.length = this.order.length;
-    println(this.length);
   }
-
-
 
 }
