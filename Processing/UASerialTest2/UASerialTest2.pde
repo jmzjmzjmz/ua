@@ -8,6 +8,8 @@ int[][] pixelOrder = { { 2, 0 }, { 2, 1 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 
 // int[][] pixelOrder = { { 2, 0 }, { 2, 1 }, { 3, 0 }, { 3, 1 }, { 4, 0 }, { 4, 1 }, { 5, 0 }, { 5, 1 }, { 6, 0 }, { 6, 1 }, { 7, 0 }, { 7, 1 }, { 8, 0 }, { 8, 1 }, { 9, 0 }, { 9, 1 }, { 9, 2 }, { 9, 3 }, { 8, 2 }, { 8, 3 }, { 7, 2 }, { 7, 3 }, { 6, 2 }, { 6, 3 }, { 5, 2 }, { 5, 3 }, { 4, 2 }, { 4, 3 }, { 3, 2 }, { 3, 3 }, { 2, 2 }, { 2, 3 }, { 0, 4 }, { 0, 5 }, { 1, 4 }, { 1, 5 }, { 2, 4 }, { 2, 5 }, { 3, 4 }, { 3, 5 }, { 4, 4 }, { 4, 5 }, { 5, 4 }, { 5, 5 }, { 6, 4 }, { 6, 5 }, { 7, 4 }, { 7, 5 }, { 8, 4 }, { 8, 5 }, { 9, 4 }, { 9, 5 }, { 9, 6 }, { 9, 7 }, { 8, 6 }, { 8, 7 }, { 7, 6 }, { 7, 7 }, { 6, 6 }, { 6, 7 }, { 5, 6 }, { 5, 7 }, { 4, 6 }, { 4, 7 }, { 3, 6 }, { 3, 7 }, { 2, 6 }, { 2, 7 }, { 1, 6 }, { 1, 7 }, { 0, 6 }, { 0, 7 } };
 
 String UDP_IP = "192.168.2.11";
+int UDP_PORT = 9999;
+
 int BAUD = 115200;
 
 int BLOCK_SIZE = 20;
@@ -19,8 +21,8 @@ int THRESH = 100;
 int IR_MAX = 1023;
 
 boolean DEBUG_SERIAL = false;
-
-boolean IR_INVERTED = true;
+boolean IR_DISABLED = false;
+boolean BASEMENT = true;
 
 UDP udp;
 
@@ -33,6 +35,7 @@ byte[] colorBytes;
 
 Pattern pattern = new SinePattern();
 
+InputFaker inputFaker = new InputFaker();
 Scheduler scheduler = new Scheduler();
 
 void setup() {
@@ -68,7 +71,8 @@ void draw() {
   color c;
   int i = 0, x, y;
 
-  scheduler.update();
+  // scheduler.update();
+  // inputFaker.update();
   pattern.update();
 
   for (int[] coord : pixelOrder) {
@@ -89,7 +93,7 @@ void draw() {
 
   }
 
-  udp.send(colorBytes, UDP_IP, 9999);
+  udp.send(colorBytes, UDP_IP, UDP_PORT);
   
 }
 
@@ -112,6 +116,8 @@ void keyPressed() {
 }
 
 void serialEvent(Serial thisPort) {
+
+  if (IR_DISABLED) return;
 
   String message = thisPort.readStringUntil(13);
 
@@ -143,7 +149,7 @@ void serialEvent(Serial thisPort) {
       int x = buffer.order[i][0] + buffer.x;
       int y = buffer.order[i][1] + buffer.y;
 
-      irTable[x][y] = IR_INVERTED ? values[i+1] : IR_MAX - values[i+1]; 
+      irTable[x][y] = BASEMENT ? values[i+1] : IR_MAX - values[i+1]; 
 
     }
 
@@ -164,27 +170,13 @@ void mouseMoved() {
   if (previousMouseCellY != mouseCellY ||
       previousMouseCellX != mouseCellX) {
 
-    irTable[previousMouseCellX][previousMouseCellY] = 0;
-    irTable[mouseCellX][mouseCellY] = 1023;
+    irTable[previousMouseCellX][previousMouseCellY] = BASEMENT ? 0 : IR_MAX;
+    irTable[mouseCellX][mouseCellY] = BASEMENT ? IR_MAX : 0;
 
   }
 
   previousMouseCellX = mouseCellX;
   previousMouseCellY = mouseCellY;
-
-}
-
-void mousePressed() {
-
-  int val = irTable[mouseX / BLOCK_SIZE][mouseY / BLOCK_SIZE];
-
-  storeIRTable();
-
-  if (val == 1023) {
-    irTable[mouseX / BLOCK_SIZE][mouseY / BLOCK_SIZE] = 0;
-  } else { 
-    irTable[mouseX / BLOCK_SIZE][mouseY / BLOCK_SIZE] = 1023;
-  }
 
 }
 

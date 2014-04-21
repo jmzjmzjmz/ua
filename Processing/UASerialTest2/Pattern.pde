@@ -8,15 +8,10 @@ class Pattern {
 class OrderTestPattern extends Pattern {
 
   int frame = 0;
-  int frame2 = 0;
 
   void update() {
     
-    frame2++;
-    
-    if (frame2 % 2 == 0)
-      frame++;
-
+    frame++;
     frame %= WIDTH * HEIGHT;
 
   }
@@ -46,6 +41,7 @@ class IRTestPattern extends Pattern {
 
 class FadePattern extends Pattern {
 
+  float DECAY = 0.03;
   float[][] fadeTable = new float[WIDTH][HEIGHT];
 
   void update() {
@@ -53,7 +49,11 @@ class FadePattern extends Pattern {
     for (int x = 0; x < fadeTable.length; x++) {
       for (int y = 0; y < fadeTable[0].length; y++) {
 
-        fadeTable[x][y] *= 0.97;
+        // if (BASEMENT) {
+          fadeTable[x][y] += (0 - fadeTable[x][y]) * DECAY;
+        // } else { 
+          // fadeTable[x][y] += (1 - fadeTable[x][y]) * DECAY;
+        // }
 
         if (irTable[x][y] > THRESH) {
           fadeTable[x][y] = 1;
@@ -94,7 +94,7 @@ class SinePattern extends Pattern {
 class PuddlePattern extends Pattern {
 
   float DAMPING = 0.96;
-  int SLOW = 2;
+  int SLOW = 1;
 
   float WAVE_CONST = 2.2;
 
