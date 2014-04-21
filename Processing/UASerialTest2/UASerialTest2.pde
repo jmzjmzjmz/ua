@@ -33,7 +33,7 @@ int[][] irTablePrev = new int[WIDTH][HEIGHT];
 
 byte[] colorBytes;
 
-Pattern pattern = new SinePattern();
+Pattern pattern;
 
 YahooWeather weather;
 
@@ -83,8 +83,8 @@ void draw() {
   color c;
   int i = 0, x, y;
 
-  // scheduler.update();
-  // inputFaker.update();
+  scheduler.update();
+  inputFaker.update();
   pattern.update();
 
   for (int[] coord : pixelOrder) {
@@ -122,6 +122,10 @@ void keyPressed() {
   } else if (key == '5') {
     pattern = new PuddlePattern();
   } else if (key == '6') {
+    pattern = new PinPointPattern();
+  } else if (key == '7') {
+    pattern = new CrawlPattern();
+  } else if (key == 'z') {
     pattern = new RainbowPuddlePattern();
   }
 

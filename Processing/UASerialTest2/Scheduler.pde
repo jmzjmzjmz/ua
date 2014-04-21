@@ -22,6 +22,7 @@ class Scheduler {
 
     Pattern[] dayPatterns = new Pattern[] {
 
+        new PinPointPattern(),
         new FadePattern(),
         new PuddlePattern()
 
@@ -29,6 +30,7 @@ class Scheduler {
 
     Pattern[] nightPatterns = new Pattern[] {
 
+        new PinPointPattern(),
         new FadePattern(),
         new PuddlePattern(),
         new SinePattern()
@@ -122,10 +124,10 @@ class Scheduler {
     }
 
     int minuteOfDay() {
-        return hour() * 60 + minute();
+        // return hour() * 60 + minute();
         
         // use this line if you want to simulate time moving faster
-        // return hour() * 3600 + minute() * 60 + second();
+        return hour() * 3600 + minute() * 60 + second();
     }
 
 }

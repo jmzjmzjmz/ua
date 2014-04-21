@@ -49,11 +49,7 @@ class FadePattern extends Pattern {
     for (int x = 0; x < fadeTable.length; x++) {
       for (int y = 0; y < fadeTable[0].length; y++) {
 
-        // if (BASEMENT) {
         fadeTable[x][y] += (0 - fadeTable[x][y]) * DECAY;
-        // } else { 
-          // fadeTable[x][y] += (1 - fadeTable[x][y]) * DECAY;
-        // }
 
         if (irTable[x][y] < THRESH) {
           fadeTable[x][y] = 1;
@@ -89,20 +85,6 @@ class SinePattern extends Pattern {
 
 };
 
-class PinPointPattern extends Pattern {
-
-  ArrayList crawlers = new ArrayList();
-
-  void update() {
-
-
-  }
-
-  void colorAt(int x, int y) {
-
-  }
-
-};
 
 class PuddlePattern extends Pattern {
 
