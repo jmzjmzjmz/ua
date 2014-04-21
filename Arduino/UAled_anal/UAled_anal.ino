@@ -7,7 +7,7 @@
 MuxShield muxShield;
 
 // How many leds in your strip?
-#define NUM_LEDS 4
+#define NUM_LEDS 6
 
 // For led chips like Neopixels, which have a data line, ground, and power, you just
 // need to define DATA_PIN.  For led chipsets that are SPI based (four wires - data, clock,
@@ -18,6 +18,7 @@ MuxShield muxShield;
 // Define the array of leds
 CRGB leds[NUM_LEDS];
 CRGB buffer[NUM_LEDS];
+int reading = 0;
 
 int IOAnalogVals[48];
 
@@ -57,8 +58,8 @@ FastLED.addLeds<LPD8806, RGB>(leds, NUM_LEDS);
 }
 
 //on micro w/ LPD8806
-int onDelay = 200; //128
-int offDelayMicro = 500; //25
+int onDelay = 16; //128
+int offDelayMicro = 1000; //25
 
 //on UNO w/ ws2801
 //int onDelay = 128;
@@ -83,7 +84,7 @@ void loop() {
       // Then add in j which makes the colors go around per pixel
       // the % 96 is to make the wheel cycle around
 //      leds[i] = Wheel( ((i * 256 / NUM_LEDS) + j) % 256);
-      leds[i] = Color(255,255,255);
+      leds[i] = Color(map(reading,300,1023,255,0),255,map(reading,300,1023,255,0));
 //      leds[i] = Color(0,0,0);
       buffer[i] = leds[i];
     }  
@@ -125,9 +126,11 @@ delayMicroseconds(offDelayMicro);
 
 //Serial.println(millis()-startTime);
 
-Serial.print(analogRead(0));
-Serial.print("\t");
-Serial.println(analogRead(1));
+reading = analogRead(0); 
+
+Serial.println(reading);
+
+
   }
 
 

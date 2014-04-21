@@ -4,9 +4,25 @@
 MuxShield muxShield;
 
 
-const int numReadings = 10;
+
+
+// char addr[2] = {'0', 32}; //make sure this contains a space after it, 0 - 7
+// String addr = "0 ";
+const int row1 = 9;
+const int row2 = 9;
+const int row3 = 9;
+const int row4 = 9;
+
+const int DELAY = 1;
+
+const int numReadings = 14; //number of readings to average, helps smooth value
+
+
+
+
 
 const int numChannels = 48;
+
 int myInts[numChannels];
 
 int readings[numChannels][numReadings];      // the readings from the analog input
@@ -19,90 +35,79 @@ void setup() {
   // initialize serial communication at 9600 bits per second:
   Serial.begin(115200);
 
+  //initialize values
   for (int thisVal = 0; thisVal < numChannels; thisVal++){
     for (int thisReading = 0; thisReading < numReadings; thisReading++){
       readings[thisVal][thisReading] = 0;        
     }
   }
 
-   //Set I/O 1, I/O 2, and I/O 3 as analog inputs
-    muxShield.setMode(1,ANALOG_IN);
-muxShield.setMode(2,ANALOG_IN);
-muxShield.setMode(3,ANALOG_IN);
+  //Set I/O 1, I/O 2, and I/O 3 as analog inputs
+  muxShield.setMode(1,ANALOG_IN);
+  muxShield.setMode(2,ANALOG_IN);
+  muxShield.setMode(3,ANALOG_IN);
 
 }
 
-//Arrays to store analog values after recieving them
-//int IO1AnalogVals[16];
-// int IO2AnalogVals[16];
-// int IO3AnalogVals[16];
 
 int chan = 0;
 
 // the loop routine runs over and over again forever:
 void loop() {
 
-//  Serial.println("START");
-  // read the input on analog pin 0:
+Serial.print("7 ");
+
+  //iterate through all 48 channels
   for(chan = 0; chan < numChannels; chan++){
- // subtract the last reading:
-  total[chan]= total[chan] - readings[chan][index[chan]];       
-//  Serial.println("test");
-  // read from the sensor:  
-  if(chan < 16){
-  readings[chan][index[chan]] = muxShield.analogReadMS(1,chan);//analogRead(inputPin[chan]);
-  }
-  else if(chan < 32){
-  readings[chan][index[chan]] = muxShield.analogReadMS(2,chan-16);//analogRead(inputPin[chan]);
-  }
-  else if(chan < 48){
-  readings[chan][index[chan]] = muxShield.analogReadMS(3,chan-32);//analogRead(inputPin[chan]);
-  }
-  // add the reading to the total:
-  total[chan]= total[chan] + readings[chan][index[chan]];       
-  // advance to the next position in the array:  
-  index[chan]++;                    
 
-  // if we're at the end of the array...
-  if (index[chan] >= numReadings){           
-    index[chan] = 0;                           
-}
+    //conditions to skip channels
+    if(chan == 14 || chan == 15 || chan == 46 || chan == 47 || 
+      (chan >= row1 && chan < 11) ||
 
-  // calculate the average:
-  average[chan] = total[chan] / numReadings;         
-  // send it to the computer as ASCII digits
-  if(chan == 0){
-  Serial.print(988); 
-  }
-  else if(chan == 47){
-  Serial.print(13);
-  }
-  else{
-  Serial.print(average[chan]); 
-  }  
-  Serial.print(" ");
-  if(chan == numChannels - 1){
-   Serial.println(); 
-  }
-  else{
-  Serial.print(" ");
-  }
-  
-// Serial.print("\t");
+      (chan >= row2+11 && chan < 14) || 
+      (chan >= row2+13 && chan < 24) || 
 
-// delay(300);
+      (chan >= row3+24 && chan < 35) || 
 
-//    myInts[i] = analogRead(inputPin);
-//
-//    Serial.println(myInts[i]);
+      (chan >= row4+35 && chan < 46)){
+      continue;
+    }
 
+    // subtract the last reading:
+    total[chan]= total[chan] - readings[chan][index[chan]];       
+    // read from the sensor:  
+    if(chan < 16){
+      readings[chan][index[chan]] = muxShield.analogReadMS(1,chan);
+    }
+    else if(chan < 32){
+      readings[chan][index[chan]] = muxShield.analogReadMS(2,chan-16);
+    }
+    else if(chan < 48){
+      readings[chan][index[chan]] = muxShield.analogReadMS(3,chan-32);
+    }
+    // add the reading to the total:
+    total[chan]= total[chan] + readings[chan][index[chan]];       
+    // advance to the next position in the array:  
+    index[chan]++;                    
 
+    // if we're at the end of the array...
+    if (index[chan] >= numReadings){           
+      index[chan] = 0;                           
+    }
 
+    // calculate the average:
+    average[chan] = total[chan] / numReadings;
+
+    //send serial data
+Serial.print(average[chan]);
+Serial.print(" ");  
 
   }
-  
-  
-//  Serial.print(0x03);
+
+  Serial.println();// terminate packet
+
+  delay(DELAY); //delay if necessary
+
 
 
 }

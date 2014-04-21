@@ -11,7 +11,7 @@ MuxShield muxShield;
 
 CRGB leds[NUM_LEDS];
 
-const int numReadings = 10;
+const int numReadings = 15;
 
 const int numChannels = 10;
 int myInts[numChannels];
@@ -21,9 +21,9 @@ int index[numChannels];                  // the index of the current reading
 int total[numChannels];                  // the running total
 int average[numChannels];                // the average
 
-int theThreshold = 10;
+int theThreshold = 100;
 int THRESH[numChannels] = {
-  5,2,9,9,10,15,15,13,15,17 };                // the threshold--- animate to white if dropping below
+  210,260,250,290,270,300,350,320,320,290 };                // the threshold--- animate to white if dropping below
 
 int frameCount[numChannels];
 boolean isAnimating[numChannels];
@@ -39,7 +39,7 @@ void setup() {
     for (int thisReading = 0; thisReading < numReadings; thisReading++){
       readings[thisVal][thisReading] = 0;        
     }
-    //    THRESH[thisVal] = theThreshold;
+THRESH[thisVal] = theThreshold;
     frameCount[thisVal] = 0;
     isAnimating[thisVal] = false;
   }
@@ -49,6 +49,8 @@ void setup() {
   muxShield.setMode(1,ANALOG_IN);
   //muxShield.setMode(2,ANALOG_IN);
   //muxShield.setMode(3,ANALOG_IN);
+  
+  // calibrate(0,5000);
 
 }
 
@@ -60,9 +62,56 @@ void loop() {
 
   // read the input on analog pin 0:
   for(chan = 0; chan < numChannels; chan++){
-    // subtract the last reading:
+    
+
+takeAvg(chan,true);
+
+
+
+
+   if((average[chan] < THRESH[chan]) && !isAnimating[chan]){
+      //START ANIMATION
+      frameCount[chan] = 0;
+      isAnimating[chan] = true;
+    }
+
+
+
+    if(isAnimating[chan] && (frameCount[chan] < maxFrames)){
+      leds[chan].r = 255;
+      leds[chan].g = map(frameCount[chan],0,maxFrames,0,255);
+      leds[chan].b = map(frameCount[chan],0,maxFrames,0,255);
+      frameCount[chan]++;  
+    }
+    else if(average[chan]<THRESH[chan] && frameCount[chan] == maxFrames){
+     //hold white
+    leds[chan].r = 255;
+      leds[chan].g = 255;
+      leds[chan].b = 255;
+     
+    }
+
+    else if((average[chan] > THRESH[chan]) && frameCount[chan] == maxFrames )  {
+      isAnimating[chan] = false; 
+      leds[chan].r = 255;
+      leds[chan].g =0;
+      leds[chan].b = 0; 
+    }
+        
+
+
+  }
+
+
+  Serial.println();
+  FastLED.show();
+
+}
+
+void takeAvg(int channel, bool debug){
+// subtract the last reading:
     total[chan]= total[chan] - readings[chan][index[chan]];       
-    //  Serial.println("test");
+    
     // read from the sensor:  
     if(chan < 16){
       readings[chan][index[chan]] = muxShield.analogReadMS(1,chan);//analogRead(inputPin[chan]);
@@ -73,6 +122,7 @@ void loop() {
     //  else if(chan < 48){
     //  readings[chan][index[chan]] = muxShield.analogReadMS(3,chan-32);//analogRead(inputPin[chan]);
     //  }
+
     // add the reading to the total:
     total[chan]= total[chan] + readings[chan][index[chan]];       
     // advance to the next position in the array:  
@@ -87,46 +137,27 @@ void loop() {
     average[chan] = total[chan] / numReadings;         
     // send it to the computer as ASCII digits
 
-
+if(debug){
       Serial.print(average[chan]);
     Serial.print("\t");
-
-
-
-
-
-    if((average[chan] < THRESH[chan]) && !isAnimating[chan]){
-      //START ANIMATION
-      frameCount[chan] = 0;
-      isAnimating[chan] = true;
-    }
-
-
-
-    if(isAnimating[chan] && (frameCount[chan] < maxFrames)){
-      leds[chan].r = 255;
-      leds[chan].g = map(frameCount[chan],0,maxFrames,0,255);
-      leds[chan].b = map(frameCount[chan],0,maxFrames,0,255);
-      frameCount[chan]++;  
-    }
-    else{
-      leds[chan].r = 255;
-      leds[chan].g =0;
-      leds[chan].b = 0; 
-    }
-    if((average[chan] < THRESH[chan]) && frameCount[chan] == maxFrames )  {
-      isAnimating[chan] = false; 
-    }
-
   }
-
-
-  Serial.println();
-  FastLED.show();
-
 }
 
 
+// void calibrate(int channel, int duration){
+//   int startTime = millis();
+
+//   while(millis()-startTime < duration){
+//   takeAvg(chan,false);
+// }
+
+
+
+// adjust threshold here
+
+
+
+// }
 
 
 

@@ -31,7 +31,7 @@ int[][] irTablePrev = new int[WIDTH][HEIGHT];
 
 byte[] colorBytes;
 
-Pattern pattern = new FadePattern();
+Pattern pattern = new SinePattern();
 
 Scheduler scheduler = new Scheduler();
 
