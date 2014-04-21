@@ -3,14 +3,13 @@
 // list of patterns in order
 // pattern index
 
-
 class Scheduler {
 
     // Patterns are scheduled to run for a random amount
     // of minutes between these two numbers
 
-    int MINIMUM_PATTERN_DURATION = 5;// 30;
-    int MAXIMUM_PATTERN_DURATION = 15;// 60;
+    int MINIMUM_PATTERN_DURATION = 30;
+    int MAXIMUM_PATTERN_DURATION = 60;
 
     // "Minute of day" at which scheduler switches over to 
     // "night mode". Since IR won't be reliable at night,
@@ -19,10 +18,8 @@ class Scheduler {
     int NIGHT_STARTS = 19 * 60; // 7PM
     int NIGHT_ENDS = 6 * 60; // 6AM
 
-
     Pattern[] dayPatterns = new Pattern[] {
 
-        
         new PinPointPattern(),
         new FadePattern(),
         new PuddlePattern()
@@ -46,26 +43,25 @@ class Scheduler {
 
     Pattern[] currentPatternList;
 
-
     Scheduler() {
           
-        int m = minuteOfDay();
-        lastMinute = m;
+        // int m = minuteOfDay();
+        // lastMinute = m;
 
-        if (isNight(m)) {
-            currentPatternList = nightPatterns;
-            inputFaker.start();
-        } else { 
-            currentPatternList = dayPatterns;
-        }
-
-        nextPattern();
+        // if (isNight(m)) {
+        //     currentPatternList = nightPatterns;
+        //     inputFaker.start();
+        // } else { 
+        //     currentPatternList = dayPatterns;
+        // }
+ 
+        // nextPattern();
 
     }
 
     void update() {
 
-        if (USE_WEATHER) {
+        try { 
 
             weather.update();
 
@@ -75,6 +71,8 @@ class Scheduler {
             int[] sunset = int(splitTokens(weather.getSunset(),": "));
             NIGHT_STARTS = (12+ sunset[0]) * 60 + sunset[1];
 
+        } catch (Exception e) {
+            // no sunrise sunset :[
         }
 
         int m = minuteOfDay();
@@ -109,8 +107,9 @@ class Scheduler {
     void nextPattern() {
 
         int m = minuteOfDay();
+        boolean nightTime = isNight(m);
 
-        currentPatternList = isNight(m) ? nightPatterns : dayPatterns;
+        currentPatternList = nightTime ? nightPatterns : dayPatterns;
 
         currentPatternDuration = int(random(MINIMUM_PATTERN_DURATION, MAXIMUM_PATTERN_DURATION));
         currentPatternStarted = m;
@@ -126,13 +125,15 @@ class Scheduler {
         println("Night starts @ " + NIGHT_STARTS);
         println("Night ends @ " + NIGHT_ENDS);
 
+        println("Night time: " + nightTime);
+
     }
 
     int minuteOfDay() {
-        // return hour() * 60 + minute();
+        return hour() * 60 + minute();
         
         // use this line if you want to simulate time moving faster
-        return hour() * 3600 + minute() * 60 + second();
+        // return hour() * 3600 + minute() * 60 + second();
     }
 
 }
