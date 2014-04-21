@@ -3,6 +3,7 @@
 // list of patterns in order
 // pattern index
 
+
 class Scheduler {
 
     // Patterns are scheduled to run for a random amount
@@ -41,6 +42,12 @@ class Scheduler {
     Pattern[] currentPatternList;
 
     Scheduler() {
+      
+      YahooWeather weather;
+      
+      weather = new YahooWeather(this, 12761344, "c", 86400000); //86400000 millis in a day
+      
+
 
         currentPatternList = dayPatterns;
         nextPattern();
@@ -48,6 +55,13 @@ class Scheduler {
     }
 
     void update() {
+        weather.update();
+        
+      int[]sunrise = int(splitTokens(weather.getSunrise(),": "));
+      NIGHT_ENDS = sunrise[0] * 60 + sunrise[1];
+      
+      int[]sunset = int(splitTokens(weather.getSunset(),": "));
+      NIGHT_STARTS = (12+ sunset[0]) * 60 + sunset[1];
 
         if (minuteOfDay() - currentPatternStarted >= currentPatternDuration) {
             nextPattern();
