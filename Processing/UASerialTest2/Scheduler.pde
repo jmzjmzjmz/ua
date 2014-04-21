@@ -64,13 +64,17 @@ class Scheduler {
 
     void update() {
 
-        weather.update();
+        if (USE_WEATHER) {
 
-        int[] sunrise = int(splitTokens(weather.getSunrise(),": "));
-        NIGHT_ENDS = sunrise[0] * 60 + sunrise[1];
+            weather.update();
 
-        int[] sunset = int(splitTokens(weather.getSunset(),": "));
-        NIGHT_STARTS = (12+ sunset[0]) * 60 + sunset[1];
+            int[] sunrise = int(splitTokens(weather.getSunrise(),": "));
+            NIGHT_ENDS = sunrise[0] * 60 + sunrise[1];
+
+            int[] sunset = int(splitTokens(weather.getSunset(),": "));
+            NIGHT_STARTS = (12+ sunset[0]) * 60 + sunset[1];
+            
+        }
 
         int m = minuteOfDay();
 
