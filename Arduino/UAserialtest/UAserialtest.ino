@@ -8,7 +8,7 @@ MuxShield muxShield;
 
 // char addr[2] = {'0', 32}; //make sure this contains a space after it, 0 - 7
 // String addr = "0 ";
-const int row1 = 9;
+const int row1 = 8;
 const int row2 = 9;
 const int row3 = 9;
 const int row4 = 9;
@@ -55,7 +55,7 @@ int chan = 0;
 // the loop routine runs over and over again forever:
 void loop() {
 
-Serial.print("7 ");
+Serial.print("6 ");
 
   //iterate through all 48 channels
   for(chan = 0; chan < numChannels; chan++){
