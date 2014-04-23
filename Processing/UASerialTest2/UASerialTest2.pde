@@ -38,8 +38,6 @@ AnalBuffer[] analBuffers = new AnalBuffer[8];
 int[][] irTable = new int[WIDTH][HEIGHT];
 int[][] irTablePrev = new int[WIDTH][HEIGHT];
 
-int[] histogram = new int[IR_MAX+1];
-
 byte[] colorBytes;
 
 Pattern pattern = new IRTestPattern();
@@ -48,6 +46,11 @@ YahooWeather weather;
 
 InputFaker inputFaker = new InputFaker();
 Scheduler scheduler;
+
+
+// the amount of standard deviations below the mean
+// at which we define the "STEP" threshhold.
+float deviationFactor = 1;
 
 void setup() {
 
@@ -71,9 +74,9 @@ void setup() {
   println(serials);
 
   controlP5 = new ControlP5(this);
-  controlP5.addSlider("THRESH")
+  controlP5.addSlider("devationFactor")
     .setPosition(WIDTH * BLOCK_SIZE, 0)
-    .setRange(0, IR_MAX)
+    .setRange(0, 3)
     .setSize(220, 20)
     .setColorCaptionLabel(color(0));
 
@@ -118,7 +121,8 @@ void draw() {
 
   pattern.update();
 
-  drawHistogram(0, height - 100, IR_MAX+1, 100);
+  calcStats();
+  drawStats(0, height - 100, IR_MAX+1, 100);
 
   stroke(200);
 
