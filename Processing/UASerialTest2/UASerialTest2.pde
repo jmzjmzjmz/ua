@@ -7,7 +7,7 @@ boolean USE_SCHEDULER = true;
 boolean USE_WEATHER = true;
 boolean USE_INPUT_FAKER = false;
 
-boolean DEBUG_SERIAL = false;
+boolean DEBUG_SERIAL = true;
 boolean IR_DISABLED = false;
 
 // // entire grid
