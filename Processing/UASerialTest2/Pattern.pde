@@ -76,6 +76,35 @@ class FadePattern extends Pattern {
 
 };
 
+class FadePattern2 extends Pattern {
+
+  float DECAY = 0.03;
+  float[][] fadeTable = new float[WIDTH][HEIGHT];
+
+  void update() {
+
+    for (int x = 0; x < fadeTable.length; x++) {
+      for (int y = 0; y < fadeTable[0].length; y++) {
+
+        fadeTable[x][y] += (0 - fadeTable[x][y]) * DECAY;
+
+        if (irTable[x][y] < THRESH) {
+          fadeTable[x][y] = 1;
+        }
+
+      }
+    }
+
+  }
+
+  color colorAt(int x, int y) {
+    
+    return lerpColor(color(0), color(255, 0, 0), fadeTable[x][y]);
+
+  }
+
+};
+
 class SinePattern extends Pattern {
 
   int frame = 0;
@@ -93,6 +122,22 @@ class SinePattern extends Pattern {
 
 };
 
+class PulsePattern extends Pattern {
+
+  int frame = 0;
+
+  void update() {
+    frame++;
+  }
+
+  color colorAt(int x, int y) {
+    
+    float t = map(sin(frame / 20.0), -1, 1, 0, 1);
+    return lerpColor(color(255, 0, 0), color(255), t);
+
+  }
+
+};
 
 class PuddlePattern extends Pattern {
 
