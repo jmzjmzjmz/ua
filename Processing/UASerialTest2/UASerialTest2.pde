@@ -3,6 +3,8 @@ import hypermedia.net.*;
 import com.onformative.yahooweather.*;
 import controlP5.*;
 
+boolean USE_ADAPTIVE_THRESH = false;
+
 boolean USE_SCHEDULER = true;
 boolean USE_INPUT_FAKER = false;
 boolean USE_WEATHER = true;
@@ -81,6 +83,12 @@ void setup() {
     .setSize(220, 20)
     .setColorCaptionLabel(color(0));
 
+  controlP5.addSlider("THRESH")
+    .setPosition(WIDTH * BLOCK_SIZE, 21)
+    .setRange(0, 1023)
+    .setSize(220, 20)
+    .setColorCaptionLabel(color(0));
+
   if (USE_SCHEDULER) scheduler = new Scheduler();
 
   if (USE_WEATHER) {
@@ -122,8 +130,12 @@ void draw() {
 
   pattern.update();
 
-  calcStats();
-  drawStats(0, height - 100, IR_MAX+1, 100);
+  if (USE_ADAPTIVE_THRESH) {
+    calcStats();
+    drawStats(0, height - 100, IR_MAX+1, 100);
+  }
+
+  println(THRESH);
 
   stroke(200);
 
@@ -145,7 +157,7 @@ void draw() {
 
   }
 
-//  udp.send(colorBytes, UDP_IP, UDP_PORT);
+  udp.send(colorBytes, UDP_IP, UDP_PORT);
   
 }
 
