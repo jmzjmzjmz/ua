@@ -3,9 +3,9 @@ import hypermedia.net.*;
 import com.onformative.yahooweather.*;
 import controlP5.*;
 
-boolean USE_SCHEDULER = false;
+boolean USE_SCHEDULER = true;
 boolean USE_INPUT_FAKER = false;
-boolean USE_WEATHER = false;
+boolean USE_WEATHER = true;
 
 // so i can code without the arduino
 boolean OPEN_SERIAL = true;

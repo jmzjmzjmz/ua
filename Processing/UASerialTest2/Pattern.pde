@@ -133,7 +133,7 @@ class PulsePattern extends Pattern {
   color colorAt(int x, int y) {
     
     float t = map(sin(frame / 20.0), -1, 1, 0, 1);
-    return lerpColor(color(255, 0, 0), color(255), t);
+    return lerpColor(color(255, 0, 0), color(0), t);
 
   }
 

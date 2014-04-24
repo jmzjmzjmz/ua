@@ -84,7 +84,6 @@ void calcStats() {
     variance /= NUM_PIXELS;
     
     stdDev = sqrt(variance);
-    println(stdDev);
 
     THRESH = int(mean - stdDev*deviationFactor);
     

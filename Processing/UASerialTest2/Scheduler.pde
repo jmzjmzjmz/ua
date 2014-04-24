@@ -20,18 +20,19 @@ class Scheduler {
 
     Pattern[] dayPatterns = new Pattern[] {
 
-        new PinPointPattern(),
-        new FadePattern(),
-        new PuddlePattern()
+        // new PinPointPattern(),
+        new Fade2Pattern()
+        // new PuddlePattern()
 
     };
 
     Pattern[] nightPatterns = new Pattern[] {
 
-        new PinPointPattern(),
-        new FadePattern(),
-        new PuddlePattern(),
-        new SinePattern()
+        // new PinPointPattern(),
+        // new FadePattern(),
+        // new PuddlePattern(),
+        // new SinePattern()
+        new PulsePattern()
 
     };
 
