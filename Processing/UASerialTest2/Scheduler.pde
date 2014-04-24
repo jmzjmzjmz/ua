@@ -32,6 +32,7 @@ class Scheduler {
         // new FadePattern(),
         // new PuddlePattern(),
         // new SinePattern()
+        // new SolidPattern(),
         new PulsePattern()
 
     };
