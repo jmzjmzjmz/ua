@@ -5,6 +5,33 @@ int histMax;
 float mean;
 float stdDev;
 
+int[][] pixelTable = new int[WIDTH][HEIGHT];
+
+int NUM_PIXELS;
+
+void findAntiPixels() {
+
+    for (int i = 0; i < pixelOrder.length; i++) {
+        int[] coords = pixelOrder[i];
+        pixelTable[coords[0]][coords[1]] = 1;
+    }
+
+    NUM_PIXELS = irTable[0].length * irTable.length;
+
+    for (int i = 0; i < irTable.length; i++) {
+        for (int j = 0; j < irTable[0].length; j++) {
+            if (isAntiPixel(i, j)) {
+                NUM_PIXELS--;
+            }
+        }
+    }
+
+
+}
+
+boolean isAntiPixel(int x, int y) {
+    return pixelTable[x][y] == 0;
+}
 
 void calcStats() {
 
@@ -16,11 +43,13 @@ void calcStats() {
     // zero out the mean
     mean = 0;
 
-    // "dead" pixels are going to fuck with this ....
-    int len = irTable[0].length * irTable.length;
 
     for (int i = 0; i < irTable.length; i++) {
         for (int j = 0; j < irTable[0].length; j++) {
+
+            if (isAntiPixel(i, j)) {
+                continue;
+            }
 
             int value = irTable[i][j];
 
@@ -33,7 +62,7 @@ void calcStats() {
 
     histMax = max(histogram);
 
-    mean /= len;
+    mean /= NUM_PIXELS;
     
     // math is "fun"
     // http://www.mathsisfun.com/data/standard-deviation.html
@@ -42,18 +71,20 @@ void calcStats() {
     for (int i = 0; i < irTable.length; i++) {
         for (int j = 0; j < irTable[0].length; j++) {
 
-            int value = irTable[i][j];
+            if (isAntiPixel(i, j)) {
+                continue;
+            }
             
+            int value = irTable[i][j];
             variance += pow(value - mean, 2);
 
         }
     }
 
-    variance /= len;
+    variance /= NUM_PIXELS;
     
-//    println(mean);
-
     stdDev = sqrt(variance);
+    println(stdDev);
 
     THRESH = int(mean - stdDev*deviationFactor);
     

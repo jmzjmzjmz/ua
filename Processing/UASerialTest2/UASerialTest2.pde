@@ -54,8 +54,9 @@ float deviationFactor = 1;
 
 void setup() {
 
-
   size(IR_MAX+1, 260);
+
+  findAntiPixels();
 
   // Start out with IR_MAX everywhere.
   for (int x = 0; x < irTable.length; x++) {
