@@ -50,10 +50,14 @@ void calcStats() {
     }
 
     variance /= len;
+    
+//    println(mean);
 
     stdDev = sqrt(variance);
 
     THRESH = int(mean - stdDev*deviationFactor);
+    
+//    println ( THRESH + " " + stdDev + " " + deviationFactor);
 
 }
 
@@ -88,8 +92,9 @@ void drawStats(int x, int y, int w, int h) {
     // draw thresh.
     px = map(THRESH, 0, histogram.length, x, x + w);
 
-    line(px, y + h, px, y);
     stroke(255, 0, 0);
+    line(px, y + h, px, y);
+    
 
 
 }

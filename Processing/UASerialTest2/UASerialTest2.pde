@@ -74,7 +74,7 @@ void setup() {
   println(serials);
 
   controlP5 = new ControlP5(this);
-  controlP5.addSlider("devationFactor")
+  controlP5.addSlider("deviationFactor")
     .setPosition(WIDTH * BLOCK_SIZE, 0)
     .setRange(0, 3)
     .setSize(220, 20)
@@ -144,7 +144,7 @@ void draw() {
 
   }
 
-  udp.send(colorBytes, UDP_IP, UDP_PORT);
+//  udp.send(colorBytes, UDP_IP, UDP_PORT);
   
 }
 
