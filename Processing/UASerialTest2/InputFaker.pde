@@ -4,7 +4,7 @@
 
 class InputFaker {
 
-    int UPDATE_FREQUENCY = 10;
+    int UPDATE_FREQUENCY = 40;
 
     boolean ENABLED = false;
 

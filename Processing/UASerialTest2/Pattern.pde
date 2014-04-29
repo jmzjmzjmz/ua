@@ -72,6 +72,10 @@ class FadePattern extends Pattern {
     
     return lerpColor(color(255, 0, 0), color(255), fadeTable[x][y]);
 
+//uncomment to turn white on blue!
+
+//return lerpColor(color(0, 0, 255), color(255), fadeTable[x][y]);
+
   }
 
 };
@@ -115,8 +119,8 @@ class SinePattern extends Pattern {
 
   color colorAt(int x, int y) {
     
-    float t = map(sin(frame / 15.0 + y / 8.0), -1, 1, 0, 1);
-    return lerpColor(color(255, 0, 0), color(255), t);
+    float t = map(sin(frame / 50.0 + y / 8.0), -1, 1, 0, 1);
+    return lerpColor(color(255, 0, 0), color(0), t);
 
   }
 
@@ -132,7 +136,7 @@ class PulsePattern extends Pattern {
 
   color colorAt(int x, int y) {
     
-    float t = map(sin(frame / 50.0), -1, 1, 0, 1);
+    float t = map(sin(frame / 50.0), -1, 1, 0, .45);
     return lerpColor(color(255, 0, 0), color(0), t);
 
   }

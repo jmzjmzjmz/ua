@@ -15,25 +15,27 @@ class Scheduler {
     // "night mode". Since IR won't be reliable at night,
     // we provide fake input data to the patterns.
 
-    int NIGHT_STARTS = 19 * 60; // 7PM
+    int NIGHT_STARTS = 19 * 60 + 45; // 7:45PM
     int NIGHT_ENDS = 6 * 60; // 6AM
 
     Pattern[] dayPatterns = new Pattern[] {
 
-        // new PinPointPattern(),
-        new FadePattern2()
+//         new PinPointPattern(),
+//        new FadePattern2()
+
+         new SolidPattern()
         // new PuddlePattern()
 
     };
 
     Pattern[] nightPatterns = new Pattern[] {
 
-        // new PinPointPattern(),
+//         new PinPointPattern(),
         // new FadePattern(),
         // new PuddlePattern(),
-        // new SinePattern()
-        // new SolidPattern(),
-        new PulsePattern()
+      //   new SinePattern(),
+         new SolidPattern()
+        //new PulsePattern()
 
     };
 
