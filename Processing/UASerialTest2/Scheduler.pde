@@ -21,9 +21,9 @@ class Scheduler {
     Pattern[] dayPatterns = new Pattern[] {
 
 //         new PinPointPattern(),
-//        new FadePattern2()
+        new FadePattern2()
 
-         new SolidPattern()
+         //new SolidPattern()
         // new PuddlePattern()
 
     };
