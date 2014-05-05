@@ -6,6 +6,8 @@
 */
 
 #include <Bounce.h>
+#include <Encoder.h>
+
 
 // Create Bounce objects for each button.  The Bounce object
 // automatically deals with contact chatter or "bounce", and
@@ -18,8 +20,12 @@ Bounce button4 = Bounce(4, 10);
 Bounce button5 = Bounce(5, 10);  // if a button is too "sensitive"
 Bounce button6 = Bounce(6, 10);  // to rapid touch, you can
 Bounce button7 = Bounce(7, 10);  // increase this time.
-Bounce button8 = Bounce(8, 10);
-Bounce button9 = Bounce(9, 10);
+
+Bounce redUA = Bounce(8, 10);  // increase this time.
+
+Encoder myEnc(9, 10);
+
+long oldPosition  = 0;
 
 void setup() {
   // Configure the pins for input mode with pullup resistors.
@@ -41,7 +47,6 @@ void setup() {
   pinMode(6, INPUT_PULLUP);  // Teensy++ LED, may need 1k resistor pullup
   pinMode(7, INPUT_PULLUP);
   pinMode(8, INPUT_PULLUP);
-  pinMode(9, INPUT_PULLUP);
 }
 
 void loop() {
@@ -56,8 +61,25 @@ void loop() {
   button5.update();
   button6.update();
   button7.update();
-  button8.update();
-  button9.update();
+  
+  redUA.update();
+ 
+  
+  long newPosition = myEnc.read();
+  
+ 
+
+  
+  
+  if (newPosition > oldPosition) {
+    oldPosition = newPosition;
+    Keyboard.print(KEY_UP_ARROW);
+  }
+  if (newPosition < oldPosition) {
+    oldPosition = newPosition;
+    Keyboard.print(KEY_DOWN_ARROW);
+  }
+  
 
   // Check each button for "falling" edge.
   // Type a message on the Keyboard when each button presses
@@ -65,71 +87,34 @@ void loop() {
   // falling = high (not pressed - voltage from pullup resistor)
   //           to low (pressed - button connects pin to ground)
   if (button0.fallingEdge()) {
-    Keyboard.println("B0 press");
+    Keyboard.print("1");
   }
   if (button1.fallingEdge()) {
-    Keyboard.println("B1 press");
+    Keyboard.print("2");
   }
   if (button2.fallingEdge()) {
-    Keyboard.println("B2 press");
+    Keyboard.print("3");
   }
   if (button3.fallingEdge()) {
-    Keyboard.println("B3 press");
+    Keyboard.print("4");
   }
   if (button4.fallingEdge()) {
-    Keyboard.println("B4 press");
+    Keyboard.print("5");
   }
   if (button5.fallingEdge()) {
-    Keyboard.println("B5 press");
+    Keyboard.print("6");
   }
   if (button6.fallingEdge()) {
-    Keyboard.println("B6 press");
+    Keyboard.print("7");
   }
   if (button7.fallingEdge()) {
-    Keyboard.println("B7 press");
+    Keyboard.print("8");
   }
-  if (button8.fallingEdge()) {
-    Keyboard.println("B8 press");
+  
+  
+  if (redUA.fallingEdge()) {
+    Keyboard.print("R");
   }
-  if (button9.fallingEdge()) {
-    Keyboard.println("B9 press");
-  }
+  
 
-  // Check each button for "rising" edge
-  // Type a message on the Keyboard when each button releases.
-  // For many types of projects, you only care when the button
-  // is pressed and the release isn't needed.
-  // rising = low (pressed - button connects pin to ground)
-  //          to high (not pressed - voltage from pullup resistor)
-  if (button0.risingEdge()) {
-    Keyboard.println("B0 release");
-  }
-  if (button1.risingEdge()) {
-    Keyboard.println("B1 release");
-  }
-  if (button2.risingEdge()) {
-    Keyboard.println("B2 release");
-  }
-  if (button3.risingEdge()) {
-    Keyboard.println("B3 release");
-  }
-  if (button4.risingEdge()) {
-    Keyboard.println("B4 release");
-  }
-  if (button5.risingEdge()) {
-    Keyboard.println("B5 release");
-  }
-  if (button6.risingEdge()) {
-    Keyboard.println("B6 release");
-  }
-  if (button7.risingEdge()) {
-    Keyboard.println("B7 release");
-  }
-  if (button8.risingEdge()) {
-    Keyboard.println("B8 release");
-  }
-  if (button9.risingEdge()) {
-    Keyboard.println("B9 release");
-  }
 }
-
