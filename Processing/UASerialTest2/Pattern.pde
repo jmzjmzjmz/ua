@@ -13,6 +13,22 @@ class SolidPattern extends Pattern {
 
 };
 
+class OffPattern extends Pattern {
+
+  color colorAt(int x, int y) {
+    return color(0);
+  }
+
+};
+
+class WhitePattern extends Pattern {
+
+  color colorAt(int x, int y) {
+    return color(255);
+  }
+
+};
+
 class OrderTestPattern extends Pattern {
 
   int frame = 0;

@@ -6,7 +6,7 @@ import controlP5.*;
 import java.awt.Color;
 
 
-float HUE_KNOB_GRAIN = 0.01;
+float HUE_KNOB_GRAIN = 0.005;
 float myHue = 0;
 color hueColor = Color.HSBtoRGB(myHue, 1, 1);
 
@@ -21,7 +21,7 @@ boolean USE_INPUT_FAKER = false;
 boolean USE_WEATHER = true;
 
 // so i can code without the arduino
-boolean OPEN_SERIAL = false;
+boolean OPEN_SERIAL = true;
 
 // prints analog-in messages
 boolean DEBUG_SERIAL = false;
@@ -181,13 +181,21 @@ void keyPressed() {
   } else if (key == '3') {
     pattern = new PulsePattern();
   } else if (key == '4') {
-    pattern = new FadePattern();
-  } else if (key == '5') {
+    pattern = new WhitePattern();
+  } 
+
+  else if (key == '5') {
     pattern = new FadePattern2();
   } else if (key == '6') {
     pattern = new PinPointPattern();
   } else if (key == '7') {
+    pattern = new PinPointPattern2();
+  } else if (key == '8') {
     pattern = new PuddlePattern();
+  } 
+
+  else if (key == '0') {
+    pattern = new OffPattern();
   }
 
   else if (key == 'q') {

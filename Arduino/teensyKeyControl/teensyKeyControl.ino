@@ -22,6 +22,8 @@ Bounce button6 = Bounce(15, 10);  // to rapid touch, you can
 Bounce button7 = Bounce(16, 10);  // increase this time.
 Bounce button8 = Bounce(17, 10);  // increase this time.
 
+Bounce button9 = Bounce(19, 10);  // increase this time.
+
 
 const int ledPins[9] = {3,4,5,6,9,10,20,21,22};
 
@@ -47,6 +49,7 @@ void setup() {
   pinMode(15, INPUT_PULLUP);  
   pinMode(16, INPUT_PULLUP);
   pinMode(17, INPUT_PULLUP);
+  pinMode(19, INPUT_PULLUP);
   
 pinMode(ledPins[0], OUTPUT);
 pinMode(ledPins[1], OUTPUT);
@@ -67,6 +70,8 @@ for(int j = 0; j < 9; j++){
 analogWrite(ledPins[j],0);
 }
 
+ledBool[6] = true;
+
 }
 
 int lastTime = 1000;
@@ -85,6 +90,7 @@ void loop() {
   button6.update();
   button7.update();
   button8.update();
+  button9.update();
  
   
   long newPosition = myEnc.read();
@@ -141,6 +147,13 @@ void loop() {
   if (button8.fallingEdge()) {
     Keyboard.print("r");
   }
+
+  if (button9.fallingEdge()) {
+    Keyboard.print("0");
+    for(int i = 0; i < 8; i++){
+    ledBool[i] = false;
+  }
+}
   
 updateLed();
 
