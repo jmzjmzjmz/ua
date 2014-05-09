@@ -3,6 +3,14 @@ import hypermedia.net.*;
 import com.onformative.yahooweather.*;
 import controlP5.*;
 
+import java.awt.Color;
+
+
+float HUE_KNOB_GRAIN = 0.01;
+float myHue = 0;
+color hueColor = Color.HSBtoRGB(myHue, 1, 1);
+
+
 // this the flag james
 // if you set it to false, the histogram goes away
 // and the threshhold slider will work.
@@ -13,7 +21,7 @@ boolean USE_INPUT_FAKER = false;
 boolean USE_WEATHER = true;
 
 // so i can code without the arduino
-boolean OPEN_SERIAL = true;
+boolean OPEN_SERIAL = false;
 
 // prints analog-in messages
 boolean DEBUG_SERIAL = false;
@@ -132,6 +140,7 @@ void draw() {
   if (USE_INPUT_FAKER) inputFaker.update();
 
   pattern.update();
+  storeIRTable();
 
   if (USE_ADAPTIVE_THRESH) {
     calcStats();
@@ -189,6 +198,14 @@ void keyPressed() {
     pattern = new CrawlPattern();
   }
 
+  else if (key == '+') {
+    myHue += HUE_KNOB_GRAIN;
+    hueColor = Color.HSBtoRGB(myHue, 1, 1);
+  } else if (key == '-') {
+    myHue -= HUE_KNOB_GRAIN;
+    hueColor = Color.HSBtoRGB(myHue, 1, 1);
+  }
+
   //  else if (key == 'z') {
   //   pattern = new RainbowPuddlePattern();
   // }
@@ -228,8 +245,6 @@ void serialEvent(Serial thisPort) {
   for (AnalBuffer buffer : analBuffers) {
 
     if (buffer == null || values[0] != buffer.id || values.length != buffer.length + 1) continue;
-
-    storeIRTable();
    
     for (int i = 0; i < buffer.length; i++) {
 
@@ -254,7 +269,6 @@ void mouseMoved() {
 
   if (mouseCellY >= HEIGHT || mouseCellX >= WIDTH) return;
 
-  storeIRTable();
 
   if (previousMouseCellY != mouseCellY ||
       previousMouseCellX != mouseCellX) {

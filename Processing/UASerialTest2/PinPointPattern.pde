@@ -49,7 +49,7 @@ class PinPointPattern extends Pattern {
     for (int x = 0; x < WIDTH; x++) {
       for (int y = 0; y < HEIGHT; y++) {
 
-        if (irTable[x][y] < THRESH && irTablePrev[x][y] >= THRESH) {
+        if (irTable[x][y] <= THRESH && irTablePrev[x][y] > THRESH) {
 
           new Crawler(x, y, -1, 0);
           new Crawler(x, y, 1, 0);
@@ -85,7 +85,7 @@ class PinPointPattern extends Pattern {
   }
 
   color colorAt(int x, int y) {
-    return lerpColor(color(0), color(255, 0, 0), fadeTable[x][y]);
+    return lerpColor(color(0), hueColor, fadeTable[x][y]);
 
   }
 
