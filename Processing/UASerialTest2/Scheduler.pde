@@ -8,8 +8,8 @@ class Scheduler {
     // Patterns are scheduled to run for a random amount
     // of minutes between these two numbers
 
-    int MINIMUM_PATTERN_DURATION = 30;
-    int MAXIMUM_PATTERN_DURATION = 60;
+    int MINIMUM_PATTERN_DURATION = 999999; // turns pattern scheduling off.
+    int MAXIMUM_PATTERN_DURATION = 999999;
 
     // "Minute of day" at which scheduler switches over to 
     // "night mode". Since IR won't be reliable at night,

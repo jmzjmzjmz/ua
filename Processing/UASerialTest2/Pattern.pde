@@ -8,7 +8,7 @@ class Pattern {
 class SolidPattern extends Pattern {
 
   color colorAt(int x, int y) {
-    return color(255, 0, 0);
+    return hueColor;
   }
 
 };
@@ -17,7 +17,7 @@ class OrderTestPattern extends Pattern {
 
   int frame = 0;
 
-  void update() {
+  void update() { 
     
     frame++;
     frame %= WIDTH * HEIGHT;
@@ -29,7 +29,7 @@ class OrderTestPattern extends Pattern {
     if (frame % WIDTH == x && frame / WIDTH == y) {
       return color(255);
     } else { 
-      return color(255, 0, 0);
+      return hueColor;
     }
 
   }
@@ -40,8 +40,8 @@ class IRTestPattern extends Pattern {
 
   color colorAt(int x, int y) {
 
-    float t = map(irTable[x][y], 0, 1023, 0, 1);
-    return lerpColor(color(255), color(255, 0, 0), t);
+    float t = map(irTable[x][y], 0, IR_MAX, 0, 1);
+    return lerpColor(color(255), hueColor, t);
 
   }
 
@@ -70,7 +70,7 @@ class FadePattern extends Pattern {
 
   color colorAt(int x, int y) {
     
-    return lerpColor(color(255, 0, 0), color(255), fadeTable[x][y]);
+    return lerpColor(hueColor, color(255), fadeTable[x][y]);
 
 //uncomment to turn white on blue!
 
@@ -103,7 +103,7 @@ class FadePattern2 extends Pattern {
 
   color colorAt(int x, int y) {
     
-    return lerpColor(color(0), color(255, 0, 0), fadeTable[x][y]);
+    return lerpColor(color(0), hueColor, fadeTable[x][y]);
 
   }
 
@@ -120,7 +120,7 @@ class SinePattern extends Pattern {
   color colorAt(int x, int y) {
     
     float t = map(sin(frame / 50.0 + y / 8.0), -1, 1, 0, 1);
-    return lerpColor(color(255, 0, 0), color(0), t);
+    return lerpColor(hueColor, color(0), t);
 
   }
 
@@ -137,7 +137,7 @@ class PulsePattern extends Pattern {
   color colorAt(int x, int y) {
     
     float t = map(sin(frame / 50.0), -1, 1, 0, .45);
-    return lerpColor(color(255, 0, 0), color(0), t);
+    return lerpColor(hueColor, color(0), t);
 
   }
 
@@ -235,7 +235,7 @@ class PuddlePattern extends Pattern {
   color colorAt(int x, int y) {
 
     float p = buffer2[ y*WIDTH + x ];
-    return color(255, p*255, p*255);
+    return lerpColor(hueColor, color(255), constrain(p, 0, 1));//color(255, p*255, p*255);
 
   }
 

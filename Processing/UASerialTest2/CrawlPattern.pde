@@ -1,29 +1,35 @@
-import java.util.*;
 
-class PinPointPattern extends Pattern {
+class CrawlPattern extends Pattern {
 
   ArrayList<Crawler> crawlers = new ArrayList<Crawler>();
   float[][] fadeTable = new float[WIDTH][HEIGHT];
 
   float DECAY = 0.9;
 
-  class Crawler {
+  int[][] directions = new int[][]{
+    {-1, 0},
+    {-1, -1},
+    {0, -1},
+    {1, -1},
+    {1, 0},
+    {1, 1},
+    {0, 1},
+    {-1, 1}
+  };
 
-    int xDir;
-    int yDir;
+  class Crawler {
 
     public int x;
     public int y;
 
     public boolean isDead = false;
 
-    Crawler(int x, int y, int xDir, int yDir) {
+    public int age = 0;
+
+    Crawler(int x, int y) {
       
       this.x = x;
       this.y = y;
-
-      this.xDir = xDir;
-      this.yDir = yDir;
 
       crawlers.add(this);
 
@@ -31,10 +37,14 @@ class PinPointPattern extends Pattern {
 
     void update() {
       
-      x += xDir;
-      y += yDir;
+      int[] dir = directions[int(random(8))];
 
-      if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) {
+      x += dir[0];
+      y += dir[1];
+
+      age++;
+
+      if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT || age > 40) {
         isDead = true;
       }
 
@@ -49,12 +59,12 @@ class PinPointPattern extends Pattern {
     for (int x = 0; x < WIDTH; x++) {
       for (int y = 0; y < HEIGHT; y++) {
 
-        if (irTable[x][y] <= THRESH && irTablePrev[x][y] > THRESH) {
+        if (irTable[x][y] < THRESH && irTablePrev[x][y] >= THRESH) {
 
-          new Crawler(x, y, -1, 0);
-          new Crawler(x, y, 1, 0);
-          new Crawler(x, y, 0, -1);
-          new Crawler(x, y, 0, 1);
+          new Crawler(x, y);
+          new Crawler(x, y);
+          new Crawler(x, y);
+          new Crawler(x, y);
 
         }
 
@@ -68,7 +78,7 @@ class PinPointPattern extends Pattern {
       if (c.isDead) {
         itr.remove();
       } else {
-        fadeTable[c.x][c.y] = 1;
+        fadeTable[c.x][c.y] += map(c.age, 0, 40, 1, 0);
       }
       c.update();
     }
@@ -85,7 +95,7 @@ class PinPointPattern extends Pattern {
   }
 
   color colorAt(int x, int y) {
-    return lerpColor(color(0), hueColor, fadeTable[x][y]);
+    return lerpColor(hueColor, color(255), fadeTable[x][y]);
 
   }
 
