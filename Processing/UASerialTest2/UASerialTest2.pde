@@ -196,6 +196,9 @@ void keyPressed() {
     pattern = new OrderTestPattern();
   } else if (key == 'e') {
     pattern = new CrawlPattern();
+  } else if (key == 'r') {
+     myHue = 0;
+     hueColor = Color.HSBtoRGB(myHue, 1, 1);
   }
 
   else if (key == '+') {
