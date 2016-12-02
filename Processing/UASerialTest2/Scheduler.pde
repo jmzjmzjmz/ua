@@ -17,11 +17,12 @@ class Scheduler {
 
     int NIGHT_STARTS = 19 * 60 + 45; // 7:45PM
     int NIGHT_ENDS = 6 * 60; // 6AM
+    
 
     Pattern[] dayPatterns = new Pattern[] {
 
-        new PinPointPattern2()
-        // new FadePattern2()
+        //new PinPointPattern()
+         new FadePattern2()
 
          //new SolidPattern()
         // new PuddlePattern()
