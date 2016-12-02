@@ -15,8 +15,8 @@ class Scheduler {
     // "night mode". Since IR won't be reliable at night,
     // we provide fake input data to the patterns.
 
-    int NIGHT_STARTS = 19 * 60 + 45; // 7:45PM
-    int NIGHT_ENDS = 6 * 60; // 6AM
+    int NIGHT_STARTS = 16 * 60 + 30; // 4:30PM
+    int NIGHT_ENDS = 5 * 60 + 45; // 5:45AM
     
 
     Pattern[] dayPatterns = new Pattern[] {
@@ -75,8 +75,9 @@ class Scheduler {
 
             int[] sunset = int(splitTokens(weather.getSunset(),": "));
             NIGHT_STARTS = (12+ sunset[0]) * 60 + sunset[1];
-
+            println("hello");
         } catch (Exception e) {
+            // println("no sunrise/sunset data");
             // no sunrise sunset :[
         }
 
@@ -101,8 +102,14 @@ class Scheduler {
             nextPattern();
         }
 
+        if(lastMinute != m){
+            println("Minute is: " + m);
+        }
+
         lastMinute = m;
 
+
+        updateTitle();
     }
 
     boolean isNight(int m) {
@@ -137,8 +144,8 @@ class Scheduler {
     int minuteOfDay() {
        return hour() * 60 + minute();
         
-        // use this line if you want to simulate time moving faster
-        // return hour() * 3600 + minute() * 60 + second();
+        // use this line if you want to simulate time moving faster (60 seconds IRL = 1 day)
+        // return (second()*24)%1440;
     }
 
 }
